@@ -20,7 +20,7 @@ readonly class SubscriberDTO
 
     /**
      * @param array{
-     *     "email"?:string,
+     *     "email":string,
      *      "emailed_at"?:Carbon,
      *      "id"?:int
      * } $data
@@ -29,7 +29,7 @@ readonly class SubscriberDTO
     public static function fromArray(array $data): SubscriberDTO
     {
         return new SubscriberDTO(
-            email: $data['email'] ?? null,
+            email: $data['email'],
             emailedAt: $data['emailed_at'] ?? null,
             id: $data['id'] ?? null,
         );

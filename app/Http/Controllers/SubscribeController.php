@@ -57,7 +57,7 @@ class SubscribeController extends Controller
         SubscribeRequest $request,
         SubscribeUserAction $subscribeUserAction
     ): JsonResponse {
-        /** @var array{"email":string, "emailed_at": ?Carbon, "id": ?int} $requestData */
+        /** @var array{"email":string, "emailed_at"?: Carbon, "id"?: int} $requestData */
         $requestData = $request->validated();
         $dto = SubscriberDTO::fromArray($requestData);
 

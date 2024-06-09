@@ -24,9 +24,9 @@ readonly class CurrencyRateDTO
 
     /**
      * @param array{
-     *    "currency_code"?: string,
-     *    "buy_rate"?: float,
-     *    "sale_rate"?: float,
+     *    "currency_code": string,
+     *    "buy_rate": float,
+     *    "sale_rate": float,
      *    "fetched_at"?: Carbon,
      *    "id"?: ?int
      *  } $data
@@ -35,9 +35,9 @@ readonly class CurrencyRateDTO
     public static function fromArray(array $data): CurrencyRateDTO
     {
         return new CurrencyRateDTO(
-            currencyCode: $data['currency_code'] ?? null,
-            buyRate: $data['buy_rate'] ?? null,
-            saleRate: $data['sale_rate'] ?? null,
+            currencyCode: $data['currency_code'],
+            buyRate: $data['buy_rate'],
+            saleRate: $data['sale_rate'],
             fetchedAt: $data['fetched_at'] ?? now(),
             id: $data['id'] ?? null,
         );
