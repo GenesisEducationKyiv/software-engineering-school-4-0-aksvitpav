@@ -19,7 +19,11 @@ readonly class SubscriberDTO
     }
 
     /**
-     * @param array{"email":string, "emailed_at": ?Carbon, "id": ?int} $data
+     * @param array{
+     *     "email"?:string,
+     *      "emailed_at"?:Carbon,
+     *      "id"?:int
+     * } $data
      * @return SubscriberDTO
      */
     public static function fromArray(array $data): SubscriberDTO

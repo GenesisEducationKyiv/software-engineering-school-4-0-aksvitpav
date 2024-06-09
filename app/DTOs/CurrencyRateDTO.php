@@ -24,9 +24,9 @@ readonly class CurrencyRateDTO
 
     /**
      * @param array{
-     *    "currency_code": string,
-     *    "buy_rate": float,
-     *    "sale_rate": float,
+     *    "currency_code"?: string,
+     *    "buy_rate"?: float,
+     *    "sale_rate"?: float,
      *    "fetched_at"?: Carbon,
      *    "id"?: ?int
      *  } $data
