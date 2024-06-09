@@ -2,12 +2,12 @@
 
 namespace App\Interfaces\Adapters;
 
-use App\VOs\CurrencyRateVO;
+use App\VOs\USDRateVO;
 
 interface CurrencyRateAdapterInterface
 {
     /**
-     * @return CurrencyRateVO
+     * @return USDRateVO
      */
-    public function getCurrencyRate(): CurrencyRateVO;
+    public function getCurrencyRate(): USDRateVO;
 }

@@ -5,7 +5,7 @@ namespace App\Adapters;
 use App\Enums\CurrencyCodeEnum;
 use App\Exceptions\CurrencyRateFetchingError;
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
-use App\VOs\CurrencyRateVO;
+use App\VOs\USDRateVO;
 use GuzzleHttp\Client;
 use Throwable;
 use UnexpectedValueException;
@@ -43,43 +43,39 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
     }
 
     /** @inheritDoc */
-    public function getCurrencyRate(): CurrencyRateVO
+    public function getCurrencyRate(): USDRateVO
     {
         try {
             $response = $this->client->request('GET', $this->baseUrl, $this->options);
             /** @var array<array{"ccy":string, "buy":float, "sale":float}> $data */
             $data = json_decode($response->getBody()->getContents(), true);
 
+            throw_if(
+                !(is_array($data)),
+                new CurrencyRateFetchingError('Fetched data has mismatch format.')
+            );
+
             $USDBuyRate = null;
             $USDSaleRate = null;
-            $EURBuyRate = null;
-            $EURSaleRate = null;
 
             foreach ($data as $currency) {
                 if ($currency['ccy'] === CurrencyCodeEnum::USD->value) {
                     $USDBuyRate = $currency['buy'];
                     $USDSaleRate = $currency['sale'];
                 }
-
-                if ($currency['ccy'] === CurrencyCodeEnum::EUR->value) {
-                    $EURBuyRate = $currency['buy'];
-                    $EURSaleRate = $currency['sale'];
-                }
             }
 
             throw_if(
-                !($USDBuyRate && $USDSaleRate && $EURBuyRate && $EURSaleRate),
+                !($USDBuyRate && $USDSaleRate),
                 new CurrencyRateFetchingError('Currency rates not found in response.')
             );
 
-            return new CurrencyRateVO(
-                USDBuyRate: $USDBuyRate,
-                USDSaleRate: $USDSaleRate,
-                EURBuyRate: $EURBuyRate,
-                EURSaleRate: $EURSaleRate,
+            return new USDRateVO(
+                buyRate: $USDBuyRate,
+                saleRate: $USDSaleRate,
             );
         } catch (Throwable $e) {
-            return new CurrencyRateVO(error: $e->getMessage());
+            return new USDRateVO(error: $e->getMessage());
         }
     }
 }

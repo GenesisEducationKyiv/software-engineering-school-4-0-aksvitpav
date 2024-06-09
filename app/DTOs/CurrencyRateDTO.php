@@ -23,16 +23,22 @@ readonly class CurrencyRateDTO
     }
 
     /**
-     * @param array{"currency_code":string, "buy_rate": float, "sale_rate": float, "id"?: ?int} $data
+     * @param array{
+     *    "currency_code": string,
+     *    "buy_rate": float,
+     *    "sale_rate": float,
+     *    "fetched_at"?: Carbon,
+     *    "id"?: ?int
+     *  } $data
      * @return CurrencyRateDTO
      */
     public static function fromArray(array $data): CurrencyRateDTO
     {
         return new CurrencyRateDTO(
-            currencyCode: $data['currency_code'],
-            buyRate: $data['buy_rate'],
-            saleRate: $data['sale_rate'],
-            fetchedAt: now(),
+            currencyCode: $data['currency_code'] ?? null,
+            buyRate: $data['buy_rate'] ?? null,
+            saleRate: $data['sale_rate'] ?? null,
+            fetchedAt: $data['fetched_at'] ?? now(),
             id: $data['id'] ?? null,
         );
     }
@@ -78,7 +84,7 @@ readonly class CurrencyRateDTO
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array{"currency_code":string, "buy_rate": float, "sale_rate": float, "fetched_at": Carbon, "id": ?int}
      */
     public function toArray(): array
     {

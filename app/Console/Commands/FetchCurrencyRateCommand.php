@@ -35,8 +35,8 @@ class FetchCurrencyRateCommand extends Command
             /** @var array{"currency_code":string, "buy_rate": float, "sale_rate": float, "id"?: ?int} $data */
             $data = [
                 'currency_code' => CurrencyCodeEnum::USD->value,
-                'buy_rate' => $vo->getUSDBuyRate(),
-                'sale_rate' => $vo->getUSDSaleRate(),
+                'buy_rate' => $vo->getBuyRate(),
+                'sale_rate' => $vo->getSaleRate(),
             ];
             $usdDto = CurrencyRateDTO::fromArray($data);
 

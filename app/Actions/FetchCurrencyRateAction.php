@@ -4,7 +4,7 @@ namespace App\Actions;
 
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
-use App\VOs\CurrencyRateVO;
+use App\VOs\USDRateVO;
 
 class FetchCurrencyRateAction
 {
@@ -19,9 +19,9 @@ class FetchCurrencyRateAction
     }
 
     /**
-     * @return CurrencyRateVO
+     * @return USDRateVO
      */
-    public function execute(): CurrencyRateVO
+    public function execute(): USDRateVO
     {
         return $this->apiAdapter->getCurrencyRate();
     }

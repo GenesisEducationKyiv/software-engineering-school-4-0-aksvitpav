@@ -17,7 +17,7 @@ class CurrencyCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): float
     {
-        return $value / 100;
+        return $value / 100000;
     }
 
     /**
@@ -27,6 +27,6 @@ class CurrencyCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): int
     {
-        return (int)round($value * 100);
+        return (int)round($value * 100000);
     }
 }

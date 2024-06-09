@@ -25,7 +25,7 @@ readonly class SubscriberDTO
     public static function fromArray(array $data): SubscriberDTO
     {
         return new SubscriberDTO(
-            email: $data['email'],
+            email: $data['email'] ?? null,
             emailedAt: $data['emailed_at'] ?? null,
             id: $data['id'] ?? null,
         );

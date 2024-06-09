@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\ExistSubscriberAction;
-use App\Actions\StoreSubscriberAction;
+use App\Actions\SubscribeUserAction;
 use App\DTOs\SubscriberDTO;
+use App\Exceptions\SubscribtionError;
 use App\Http\Requests\SubscribeRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
@@ -49,25 +49,24 @@ class SubscribeController extends Controller
      *   )
      *
      * @param SubscribeRequest $request
-     * @param ExistSubscriberAction $existSubscriberAction
-     * @param StoreSubscriberAction $storeSubscriberAction
+     * @param SubscribeUserAction $subscribeUserAction
      * @return JsonResponse
+     * @throws SubscribtionError
      */
     public function __invoke(
         SubscribeRequest $request,
-        ExistSubscriberAction $existSubscriberAction,
-        StoreSubscriberAction $storeSubscriberAction
+        SubscribeUserAction $subscribeUserAction
     ): JsonResponse {
         /** @var array{"email":string, "emailed_at": ?Carbon, "id": ?int} $requestData */
         $requestData = $request->validated();
         $dto = SubscriberDTO::fromArray($requestData);
-        $isSubscruberExist = $existSubscriberAction->execute($dto);
 
-        if (!$isSubscruberExist) {
-            $storeSubscriberAction->execute($dto);
+        $isSubscribed = $subscribeUserAction->execute($dto);
+
+        if ($isSubscribed) {
             return response()->json(['message' => 'Email successfully added'], Response::HTTP_OK);
-        } else {
-            return response()->json(['message' => 'Email already exists'], Response::HTTP_CONFLICT);
         }
+
+        return response()->json(['message' => 'Email already exists'], Response::HTTP_CONFLICT);
     }
 }
