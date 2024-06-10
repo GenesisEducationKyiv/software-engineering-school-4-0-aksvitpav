@@ -5,6 +5,8 @@ namespace App\Adapters;
 use App\Enums\CurrencyCodeEnum;
 use App\Exceptions\CurrencyRateFetchingError;
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
+use App\Interfaces\VOs\CurrencyRateVOInterface;
+use App\VOs\USDErrorRateVO;
 use App\VOs\USDRateVO;
 use GuzzleHttp\Client;
 use Throwable;
@@ -43,17 +45,19 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
     }
 
     /** @inheritDoc */
-    public function getCurrencyRate(): USDRateVO
+    public function getCurrencyRate(): CurrencyRateVOInterface
     {
         try {
             $response = $this->client->request('GET', $this->baseUrl, $this->options);
-            /** @var array<array{"ccy":string, "buy":float, "sale":float}> $data */
-            $data = json_decode($response->getBody()->getContents(), true);
+            $requestContents = $response->getBody()->getContents();
 
             throw_if(
-                !(is_array($data)),
+                !json_validate($requestContents),
                 new CurrencyRateFetchingError('Fetched data has mismatch format.')
             );
+
+            /** @var array<array{"ccy":string, "buy":float, "sale":float}> $data */
+            $data = json_decode($requestContents, true);
 
             $USDBuyRate = null;
             $USDSaleRate = null;
@@ -75,7 +79,7 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
                 saleRate: $USDSaleRate,
             );
         } catch (Throwable $e) {
-            return new USDRateVO(error: $e->getMessage());
+            return new USDErrorRateVO(errorMessage: $e->getMessage());
         }
     }
 }

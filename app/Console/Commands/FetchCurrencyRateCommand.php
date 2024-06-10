@@ -31,18 +31,19 @@ class FetchCurrencyRateCommand extends Command
         StoreCurrencyRateAction $storeCurrencyRateAction
     ): void {
         $vo = $fetchCurrencyRate->execute();
-        if (!$vo->hasError()) {
-            /** @var array{"currency_code":string, "buy_rate": float, "sale_rate": float, "id"?: ?int} $data */
-            $data = [
-                'currency_code' => CurrencyCodeEnum::USD->value,
-                'buy_rate' => $vo->getBuyRate(),
-                'sale_rate' => $vo->getSaleRate(),
-            ];
-            $usdDto = CurrencyRateDTO::fromArray($data);
-
-            $storeCurrencyRateAction->execute($usdDto);
-        } else {
+        if ($vo->hasError()) {
             Log::error('Can\'t fetch currency rate', ['error' => $vo->getError()]);
+            return;
         }
+
+        /** @var array{"currency_code":string, "buy_rate": float, "sale_rate": float, "id"?: ?int} $data */
+        $data = [
+            'currency_code' => CurrencyCodeEnum::USD->value,
+            'buy_rate' => $vo->getBuyRate(),
+            'sale_rate' => $vo->getSaleRate(),
+        ];
+        $usdDto = CurrencyRateDTO::fromArray($data);
+
+        $storeCurrencyRateAction->execute($usdDto);
     }
 }

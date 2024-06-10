@@ -5,15 +5,13 @@ namespace App\VOs;
 use App\Interfaces\VOs\CurrencyRateVOInterface;
 use UnexpectedValueException;
 
-class USDRateVO implements CurrencyRateVOInterface
+class USDErrorRateVO implements CurrencyRateVOInterface
 {
     /**
-     * @param float $buyRate
-     * @param float $saleRate
+     * @param string $errorMessage
      */
     public function __construct(
-        protected float $buyRate,
-        protected float $saleRate
+        protected string $errorMessage
     ) {
     }
 
@@ -22,7 +20,7 @@ class USDRateVO implements CurrencyRateVOInterface
      */
     public function getBuyRate(): float
     {
-        return $this->buyRate;
+        throw new UnexpectedValueException('Cannot get buy rate');
     }
 
     /**
@@ -30,7 +28,7 @@ class USDRateVO implements CurrencyRateVOInterface
      */
     public function getSaleRate(): float
     {
-        return $this->saleRate;
+        throw new UnexpectedValueException('Cannot get sale rate');
     }
 
     /**
@@ -38,7 +36,7 @@ class USDRateVO implements CurrencyRateVOInterface
      */
     public function getError(): string
     {
-        throw new UnexpectedValueException('No error present.');
+        return $this->errorMessage;
     }
 
     /**
@@ -46,6 +44,6 @@ class USDRateVO implements CurrencyRateVOInterface
      */
     public function hasError(): bool
     {
-        return false;
+        return true;
     }
 }
