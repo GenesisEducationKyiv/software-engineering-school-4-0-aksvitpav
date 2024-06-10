@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CurrencyCast implements CastsAttributes
 {
+    public const DIVIDER = 100000;
+
     /**
      * Cast the given value.
      *
@@ -17,7 +19,7 @@ class CurrencyCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): float
     {
-        return $value / 100000;
+        return $value / self::DIVIDER;
     }
 
     /**
@@ -27,6 +29,6 @@ class CurrencyCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): int
     {
-        return (int)round($value * 100000);
+        return (int)round($value * self::DIVIDER);
     }
 }

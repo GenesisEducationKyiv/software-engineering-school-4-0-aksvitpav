@@ -3,6 +3,7 @@
 namespace App\DTOs;
 
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 
 readonly class SubscriberDTO
 {
@@ -28,10 +29,14 @@ readonly class SubscriberDTO
      */
     public static function fromArray(array $data): SubscriberDTO
     {
+        if (!array_key_exists('email', $data)) {
+            throw new InvalidArgumentException("Missing required key: email");
+        }
+
         return new SubscriberDTO(
-            email: $data['email'],
-            emailedAt: $data['emailed_at'] ?? null,
-            id: $data['id'] ?? null,
+            email: (string)$data['email'],
+            emailedAt: ($data['emailed_at'] ?? null) ? Carbon::parse($data['emailed_at']) : null,
+            id: ($data['id'] ?? null) ? (int)$data['id'] : null,
         );
     }
 
