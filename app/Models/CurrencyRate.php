@@ -8,12 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
- *
  * @property int $id
  * @property CurrencyCodeEnum $currency_code
- * @property mixed $buy_rate
- * @property mixed $sale_rate
+ * @property float $buy_rate
+ * @property float $sale_rate
  * @property string $fetched_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -40,6 +38,9 @@ class CurrencyRate extends Model
         'fetched_at',
     ];
 
+    /**
+     * @return string[]
+     */
     protected function casts(): array
     {
         return [

@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
- *
  * @property int $id
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $emailed_at
@@ -32,6 +30,9 @@ class Subscriber extends Model
         'emailed_at',
     ];
 
+    /**
+     * @return string[]
+     */
     protected function casts(): array
     {
         return [

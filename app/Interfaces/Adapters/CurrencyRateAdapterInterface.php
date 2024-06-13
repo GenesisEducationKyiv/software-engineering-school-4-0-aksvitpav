@@ -2,14 +2,12 @@
 
 namespace App\Interfaces\Adapters;
 
-use App\VOs\CurrencyRateVO;
+use App\Interfaces\VOs\CurrencyRateVOInterface;
 
 interface CurrencyRateAdapterInterface
 {
     /**
-     * @param string $url
-     * @param array $options
-     * @return CurrencyRateVO
+     * @return CurrencyRateVOInterface
      */
-    public function getCurrencyRate(string $url, array $options): CurrencyRateVO;
+    public function getCurrencyRate(): CurrencyRateVOInterface;
 }

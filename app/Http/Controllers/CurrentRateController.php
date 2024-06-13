@@ -46,8 +46,10 @@ class CurrentRateController extends Controller
      * @param GetCurrentRateAction $getCurrentRateAction
      * @return CurrentRateResource|JsonResponse
      */
-    public function __invoke(Request $request, GetCurrentRateAction $getCurrentRateAction): CurrentRateResource|JsonResponse
-    {
+    public function __invoke(
+        Request $request,
+        GetCurrentRateAction $getCurrentRateAction
+    ): CurrentRateResource|JsonResponse {
         $currentRate = $getCurrentRateAction->execute();
 
         if ($currentRate) {

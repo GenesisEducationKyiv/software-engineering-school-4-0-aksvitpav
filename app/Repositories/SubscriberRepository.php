@@ -10,14 +10,15 @@ use Illuminate\Support\Collection;
 
 readonly class SubscriberRepository extends AbstractRepository implements SubscriberRepositoryInterface
 {
-
     /** @inheritDoc */
     public function getModel(): Subscriber
     {
         return new Subscriber();
     }
 
-    /** @inheritDoc */
+    /**
+     * @return Builder<Subscriber>
+     */
     public function getQuery(): Builder
     {
         return Subscriber::query();

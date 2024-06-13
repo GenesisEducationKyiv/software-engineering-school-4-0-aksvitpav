@@ -96,8 +96,13 @@ abstract readonly class AbstractRepository implements RepositoryInterface
     }
 
     /** @inheritDoc */
-    public function findBy(array $conditions, string $orderBy = 'created_at', bool $orderAsc = true, ?array $with = null, ?array $select = ['*']): ?Model
-    {
+    public function findBy(
+        array $conditions,
+        string $orderBy = 'created_at',
+        bool $orderAsc = true,
+        ?array $with = null,
+        ?array $select = ['*']
+    ): ?Model {
         $query = $this->getQuery()->select($select)->where($conditions);
 
         if ($with) {
@@ -122,10 +127,17 @@ abstract readonly class AbstractRepository implements RepositoryInterface
     /** @inheritDoc */
     public function getAll(?array $select = ['*'], ?array $with = [], ?array $where = []): Collection
     {
-        $query = $this
-            ->getQuery()
-            ->with($with)
-            ->where($where)
+        $query = $this->getQuery();
+
+        if (! empty($with)) {
+            $query->with($with);
+        }
+
+        if (! empty($where)) {
+            $query->where($where);
+        }
+
+        $query
             ->select($select);
 
         return $query->get();
@@ -145,7 +157,7 @@ abstract readonly class AbstractRepository implements RepositoryInterface
     public function deleteById(int $id): void
     {
         $model = $this->getQuery()->where('id', $id)->first();
-        $model->delete();
+        $model?->delete();
     }
 
     /** @inheritDoc */
@@ -212,7 +224,7 @@ abstract readonly class AbstractRepository implements RepositoryInterface
     {
         $query = $model->$relationName();
 
-        if (! empty($ids)) {
+        if (!empty($ids)) {
             $query->whereNotIn('id', $ids);
         }
 

@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\DTOs\SubscriberDTO;
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
 use App\Models\Subscriber;
+use Illuminate\Database\Eloquent\Model;
 
 class StoreSubscriberAction
 {
@@ -18,9 +19,9 @@ class StoreSubscriberAction
 
     /**
      * @param SubscriberDTO $dto
-     * @return Subscriber
+     * @return Subscriber|Model
      */
-    public function execute(SubscriberDTO $dto): Subscriber
+    public function execute(SubscriberDTO $dto): Subscriber|Model
     {
         return $this->subscriberRepository->create($dto->toArray());
     }

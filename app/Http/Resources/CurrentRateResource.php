@@ -19,9 +19,9 @@ class CurrentRateResource extends JsonResource
     public $resource;
 
     /**
-     * @var bool
+     * @var null|string
      */
-    public static $wrap = false;
+    public static $wrap = null;
 
     /**
      *  Transform the resource into an array.
@@ -30,7 +30,7 @@ class CurrentRateResource extends JsonResource
      * @OA\Property(property="sale", type="float", description="Current sale currency rate", example=41.5)
      *
      * @param Request $request
-     * @return array
+     * @return array<string, float>
      */
     public function toArray(Request $request): array
     {

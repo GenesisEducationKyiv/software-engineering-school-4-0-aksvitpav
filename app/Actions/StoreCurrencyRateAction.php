@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\DTOs\CurrencyRateDTO;
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
 use App\Models\CurrencyRate;
+use Illuminate\Database\Eloquent\Model;
 
 class StoreCurrencyRateAction
 {
@@ -18,11 +19,11 @@ class StoreCurrencyRateAction
 
     /**
      * @param CurrencyRateDTO $dto
-     * @return CurrencyRate
+     * @return Model|CurrencyRate|null
      */
-    public function execute(CurrencyRateDTO $dto): CurrencyRate
+    public function execute(CurrencyRateDTO $dto): Model|CurrencyRate|null
     {
-        /** @var CurrencyRate $lastRate */
+        /** @var CurrencyRate|null $lastRate */
         $lastRate = $this->currencyRateRepository->findBy(
             [
                 'currency_code' => $dto->getCurrencyCode()
@@ -33,7 +34,7 @@ class StoreCurrencyRateAction
 
         if (
             $lastRate?->buy_rate === $dto->getBuyRate()
-            && $lastRate?->sale_rate === $dto->getSaleRate()
+            && $lastRate->sale_rate === $dto->getSaleRate()
         ) {
             return $this->currencyRateRepository->updateById(
                 $lastRate->id,
@@ -43,7 +44,7 @@ class StoreCurrencyRateAction
             );
         }
 
-        if ($lastRate?->fetched_at < now()/*->subHour()*/) {
+        if ($lastRate?->fetched_at < now()->subHour()) {
             return $this->currencyRateRepository->create($dto->toArray());
         }
 

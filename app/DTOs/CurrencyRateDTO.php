@@ -3,6 +3,7 @@
 namespace App\DTOs;
 
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 
 readonly class CurrencyRateDTO
 {
@@ -23,17 +24,30 @@ readonly class CurrencyRateDTO
     }
 
     /**
-     * @param array $data
+     * @param array{
+     *    "currency_code": string,
+     *    "buy_rate": float,
+     *    "sale_rate": float,
+     *    "fetched_at"?: Carbon,
+     *    "id"?: ?int
+     *  } $data
      * @return CurrencyRateDTO
      */
-    public static function fromArray(array $data): CurrencyRateDto
+    public static function fromArray(array $data): CurrencyRateDTO
     {
+        $requiredKeys = ['currency_code', 'buy_rate', 'sale_rate'];
+        foreach ($requiredKeys as $key) {
+            if (!array_key_exists($key, $data)) {
+                throw new InvalidArgumentException("Missing required key: {$key}");
+            }
+        }
+
         return new CurrencyRateDTO(
-            currencyCode: $data['currency_code'],
-            buyRate: $data['buy_rate'],
-            saleRate: $data['sale_rate'],
-            fetchedAt: now(),
-            id: $data['id'] ?? null,
+            currencyCode: (string)$data['currency_code'],
+            buyRate: (float)$data['buy_rate'],
+            saleRate: (float)$data['sale_rate'],
+            fetchedAt: ($data['fetched_at'] ?? null) ? Carbon::parse($data['fetched_at']) : now(),
+            id: ($data['id'] ?? null) ? (int)$data['id'] : null,
         );
     }
 
@@ -78,7 +92,7 @@ readonly class CurrencyRateDTO
     }
 
     /**
-     * @return array
+     * @return array{"currency_code":string, "buy_rate": float, "sale_rate": float, "fetched_at": Carbon, "id": ?int}
      */
     public function toArray(): array
     {

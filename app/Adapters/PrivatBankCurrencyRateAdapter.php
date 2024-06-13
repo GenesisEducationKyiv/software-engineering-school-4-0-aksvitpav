@@ -3,10 +3,14 @@
 namespace App\Adapters;
 
 use App\Enums\CurrencyCodeEnum;
+use App\Exceptions\CurrencyRateFetchingError;
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
-use App\VOs\CurrencyRateVO;
+use App\Interfaces\VOs\CurrencyRateVOInterface;
+use App\VOs\USDErrorRateVO;
+use App\VOs\USDRateVO;
 use GuzzleHttp\Client;
 use Throwable;
+use UnexpectedValueException;
 
 class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
 {
@@ -16,40 +20,66 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
     protected string $baseUrl;
 
     /**
+     * @var array<string, array<string, int|string>>
+     */
+    protected array $options;
+
+    /**
      * @param Client $client
      */
     public function __construct(protected Client $client)
     {
-        $this->baseUrl = config('currency_api.privat_bank_api_base_uri');
+        $baseUrl = config('currency_api.privat_bank_api_base_uri');
+        if (!is_string($baseUrl)) {
+            throw new UnexpectedValueException('The base URL must be a string.');
+        }
+
+        $this->baseUrl = $baseUrl;
+
+        $this->options = [
+            'query' => [
+                'exchange' => 1,
+                'coursid' => 5
+            ],
+        ];
     }
 
     /** @inheritDoc */
-    public function getCurrencyRate(string $url, array $options): CurrencyRateVO
+    public function getCurrencyRate(): CurrencyRateVOInterface
     {
         try {
-            $response = $this->client->request('GET', $this->baseUrl . $url, $options);
-            $data = json_decode($response->getBody()->getContents(), true);
+            $response = $this->client->request('GET', $this->baseUrl, $this->options);
+            $requestContents = $response->getBody()->getContents();
+
+            throw_if(
+                !json_validate($requestContents),
+                new CurrencyRateFetchingError('Fetched data has mismatch format.')
+            );
+
+            /** @var array<array{"ccy":string, "buy":float, "sale":float}> $data */
+            $data = json_decode($requestContents, true);
+
+            $USDBuyRate = null;
+            $USDSaleRate = null;
 
             foreach ($data as $currency) {
                 if ($currency['ccy'] === CurrencyCodeEnum::USD->value) {
                     $USDBuyRate = $currency['buy'];
                     $USDSaleRate = $currency['sale'];
                 }
-
-                if ($currency['ccy'] === CurrencyCodeEnum::EUR->value) {
-                    $EURBuyRate = $currency['buy'];
-                    $EURSaleRate = $currency['sale'];
-                }
             }
 
-            return new CurrencyRateVO(
-                USDBuyRate: $USDBuyRate,
-                USDSaleRate: $USDSaleRate,
-                EURBuyRate: $EURBuyRate,
-                EURSaleRate: $EURSaleRate,
+            throw_if(
+                !($USDBuyRate && $USDSaleRate),
+                new CurrencyRateFetchingError('Currency rates not found in response.')
+            );
+
+            return new USDRateVO(
+                buyRate: $USDBuyRate,
+                saleRate: $USDSaleRate,
             );
         } catch (Throwable $e) {
-            return new CurrencyRateVO(error: $e->getMessage());
+            return new USDErrorRateVO(errorMessage: $e->getMessage());
         }
     }
 }

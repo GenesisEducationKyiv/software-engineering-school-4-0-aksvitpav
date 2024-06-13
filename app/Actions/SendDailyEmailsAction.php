@@ -27,7 +27,7 @@ class SendDailyEmailsAction
     {
         $startToday = now()->startOfDay();
 
-        /** @var CurrencyRate $currencyRate */
+        /** @var CurrencyRate|null $currencyRate */
         $currencyRate = $this->getCurrentRateAction->execute();
 
         if (! $currencyRate) {

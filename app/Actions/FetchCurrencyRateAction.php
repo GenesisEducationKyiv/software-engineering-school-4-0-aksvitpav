@@ -4,7 +4,7 @@ namespace App\Actions;
 
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
-use App\VOs\CurrencyRateVO;
+use App\Interfaces\VOs\CurrencyRateVOInterface;
 
 class FetchCurrencyRateAction
 {
@@ -19,17 +19,10 @@ class FetchCurrencyRateAction
     }
 
     /**
-     * @return CurrencyRateVO
+     * @return CurrencyRateVOInterface
      */
-    public function execute(): CurrencyRateVO
+    public function execute(): CurrencyRateVOInterface
     {
-        $options = [
-            'query' => [
-                'exchange' => 1,
-                'coursid' => 5
-            ],
-        ];
-
-        return $this->apiAdapter->getCurrencyRate('', $options);
+        return $this->apiAdapter->getCurrencyRate();
     }
 }

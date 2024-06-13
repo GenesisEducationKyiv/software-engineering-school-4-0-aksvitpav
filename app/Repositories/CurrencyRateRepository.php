@@ -9,14 +9,17 @@ use Illuminate\Support\Carbon;
 
 readonly class CurrencyRateRepository extends AbstractRepository implements CurrencyRateRepositoryInterface
 {
-
-    /** @inheritDoc */
+    /**
+     * @return CurrencyRate
+     */
     public function getModel(): CurrencyRate
     {
         return new CurrencyRate();
     }
 
-    /** @inheritDoc */
+    /**
+     * @return Builder<CurrencyRate>
+     */
     public function getQuery(): Builder
     {
         return CurrencyRate::query();

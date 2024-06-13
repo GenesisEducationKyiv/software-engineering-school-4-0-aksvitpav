@@ -2,6 +2,7 @@
 
 namespace App\Interfaces\Repositories;
 
+use App\Models\Subscriber;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -9,7 +10,7 @@ interface SubscriberRepositoryInterface extends RepositoryInterface
 {
     /**
      * @param Carbon $toDate
-     * @return Collection
+     * @return Collection<int, Subscriber>
      */
     public function getNotEmailedSubscribers(Carbon $toDate): Collection;
 }

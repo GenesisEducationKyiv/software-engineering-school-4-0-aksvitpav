@@ -13,6 +13,7 @@ class RateTest extends TestCase
 {
     //use RefreshDatabase;
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_it_returns_current_rate_successfully(): void
     {
         $currentRate = new CurrencyRate(
@@ -38,6 +39,7 @@ class RateTest extends TestCase
             ]);
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_it_returns_bad_request_when_rate_is_invalid(): void
     {
         $getCurrentRateActionMock = Mockery::mock(GetCurrentRateAction::class);
