@@ -2,10 +2,10 @@
 
 namespace App\Actions;
 
+use App\Exceptions\SendingEmailException;
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
 use App\Jobs\SendDailyEmailJob;
 use App\Models\CurrencyRate;
-use App\Models\Subscriber;
 use Illuminate\Support\Facades\Log;
 
 class SendDailyEmailsAction
@@ -13,15 +13,18 @@ class SendDailyEmailsAction
     /**
      * @param SubscriberRepositoryInterface $subscriberRepository
      * @param GetCurrentRateAction $getCurrentRateAction
+     * @param SendEmailAction $sendEmailAction
      */
     public function __construct(
         protected SubscriberRepositoryInterface $subscriberRepository,
         protected GetCurrentRateAction $getCurrentRateAction,
+        protected SendEmailAction $sendEmailAction,
     ) {
     }
 
     /**
      * @return void
+     * @throws SendingEmailException
      */
     public function execute(): void
     {
@@ -30,7 +33,7 @@ class SendDailyEmailsAction
         /** @var CurrencyRate|null $currencyRate */
         $currencyRate = $this->getCurrentRateAction->execute();
 
-        if (! $currencyRate) {
+        if (!$currencyRate) {
             Log::error('Current rate not found. Can\'t send mails.');
             return;
         }
@@ -38,8 +41,7 @@ class SendDailyEmailsAction
         $subscribers = $this->subscriberRepository->getNotEmailedSubscribers($startToday);
 
         foreach ($subscribers as $subscriber) {
-            /** @var Subscriber $subscriber */
-            SendDailyEmailJob::dispatch($subscriber, $currencyRate);
+            $this->sendEmailAction->execute($subscriber, SendDailyEmailJob::class, $currencyRate);
         }
     }
 }
