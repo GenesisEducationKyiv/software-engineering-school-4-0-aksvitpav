@@ -20,6 +20,7 @@ class SubscribeRepositoryTest extends TestCase
         parent::tearDown();
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_get_model()
     {
         $repository = new SubscriberRepository();
@@ -28,6 +29,7 @@ class SubscribeRepositoryTest extends TestCase
         $this->assertInstanceOf(Subscriber::class, $model);
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_get_query()
     {
         $repository = new SubscriberRepository();
@@ -36,6 +38,7 @@ class SubscribeRepositoryTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Builder::class, $query);
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_get_not_emailed_subscribers()
     {
         $toDate = Carbon::now()->subDays(30);
@@ -70,6 +73,7 @@ class SubscribeRepositoryTest extends TestCase
         $mockQuery->shouldHaveReceived('get')->once();
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_get_not_emailed_subscribers_with_no_records()
     {
         $toDate = Carbon::now()->subDays(30);
@@ -105,6 +109,7 @@ class SubscribeRepositoryTest extends TestCase
         $mockQuery->shouldHaveReceived('get')->once();
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_get_not_emailed_subscribers_with_future_date()
     {
         $toDate = Carbon::now()->addDays(30);

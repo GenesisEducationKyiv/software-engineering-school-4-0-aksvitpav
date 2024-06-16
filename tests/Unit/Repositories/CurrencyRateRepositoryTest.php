@@ -19,6 +19,7 @@ class CurrencyRateRepositoryTest extends TestCase
         parent::tearDown();
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_get_model()
     {
         $repository = new CurrencyRateRepository();
@@ -27,6 +28,7 @@ class CurrencyRateRepositoryTest extends TestCase
         $this->assertInstanceOf(CurrencyRate::class, $model);
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_get_query()
     {
         $repository = new CurrencyRateRepository();
@@ -35,6 +37,7 @@ class CurrencyRateRepositoryTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Builder::class, $query);
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_clear_values_older_than()
     {
         $date = Carbon::now()->subDays(30);
@@ -58,6 +61,7 @@ class CurrencyRateRepositoryTest extends TestCase
         $this->assertTrue(true);
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_clear_values_older_than_with_no_records()
     {
         $date = Carbon::now()->subDays(30);
@@ -81,6 +85,7 @@ class CurrencyRateRepositoryTest extends TestCase
         $this->assertTrue(true);
     }
 
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_clear_values_older_than_with_future_date()
     {
         $date = Carbon::now()->addDays(30);
