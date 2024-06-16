@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Actions\SetEmailedAtForSubscriberAction;
+use App\Interfaces\Jobs\EmailJobInterface;
 use App\Mail\CurrentRateMail;
 use App\Models\CurrencyRate;
 use App\Models\Subscriber;
@@ -13,7 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 
-class SendDailyEmailJob implements ShouldQueue
+class SendDailyEmailJob implements ShouldQueue, EmailJobInterface
 {
     use Dispatchable;
     use InteractsWithQueue;
