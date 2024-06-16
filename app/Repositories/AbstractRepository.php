@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-abstract readonly class AbstractRepository implements RepositoryInterface
+abstract class AbstractRepository implements RepositoryInterface
 {
     /** @inheritDoc */
     public function getQuery(): Builder
