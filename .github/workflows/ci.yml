@@ -25,11 +25,3 @@
 
         - name: Run tests with coverage
           run: ./vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-html=coverage-html
-
-        - name: Upload coverage reports
-          uses: actions/upload-artifact@v3
-          with:
-            name: coverage-reports
-            path: |
-              coverage.xml
-              coverage-html/
