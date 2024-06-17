@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\Repositories\CrudRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 
-abstract readonly class AbstractCrudRepository extends AbstractBaseRepository implements CrudRepositoryInterface
+abstract readonly class AbstractCrudRepository extends AbstractFindRepository implements CrudRepositoryInterface
 {
     /** @inheritDoc */
     public function updateBy(array $conditions, array $updates): void

@@ -2,11 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\Repositories\PaginationRepositoryInterface;
+use App\Interfaces\Repositories\RelationRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 
 abstract readonly class AbstractRelationBaseRepository extends AbstractPaginationRepository implements
-    PaginationRepositoryInterface
+    RelationRepositoryInterface
 {
     /** @inheritDoc */
     public function deleteRelation(Model $model, string $relationName): void

@@ -5,7 +5,7 @@ namespace App\Interfaces\Repositories;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-interface FindRepositoryInterface
+interface FindRepositoryInterface extends BaseRepositoryInterface
 {
     /**
      * @param int $id
