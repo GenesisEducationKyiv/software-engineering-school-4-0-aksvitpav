@@ -12,7 +12,7 @@
           uses: shivammathur/setup-php@v2
           with:
             php-version: '8.3'
-            coverage: none
+            coverage: xdebug
 
         - name: Install composer dependencies
           run: composer install -n --prefer-dist
@@ -22,3 +22,14 @@
 
         - name: Run PHPCodeSniffer
           run: ./vendor/bin/phpcs --report=full
+
+        - name: Run tests with coverage
+          run: ./vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-html=coverage-html
+
+        - name: Upload coverage reports
+          uses: actions/upload-artifact@v3
+          with:
+            name: coverage-reports
+            path: |
+              coverage.xml
+              coverage-html/
