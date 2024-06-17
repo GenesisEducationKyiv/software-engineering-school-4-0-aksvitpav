@@ -23,9 +23,6 @@
         - name: Run PHPCodeSniffer
           run: ./vendor/bin/phpcs --report=full
 
-        - name: Run tests with coverage
-          run: ./vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-html=coverage-html
-
     tests:
       name: Tests
       runs-on: ubuntu-latest
