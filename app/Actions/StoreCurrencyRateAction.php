@@ -44,7 +44,14 @@ class StoreCurrencyRateAction
             );
         }
 
-        if ($lastRate?->fetched_at < now()->subHour()) {
+        if (
+            $lastRate?->buy_rate !== $dto->getBuyRate()
+            || $lastRate->sale_rate !== $dto->getSaleRate()
+        ) {
+            return $this->currencyRateRepository->create($dto->toArray());
+        }
+
+        if ($lastRate->fetched_at < now()->subHour()) {
             return $this->currencyRateRepository->create($dto->toArray());
         }
 
