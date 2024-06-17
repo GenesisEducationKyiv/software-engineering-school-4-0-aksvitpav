@@ -6,7 +6,7 @@ use App\Models\Subscriber;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-interface SubscriberRepositoryInterface extends RepositoryInterface
+interface SubscriberRepositoryInterface extends RelationRepositoryInterface
 {
     /**
      * @param Carbon $toDate

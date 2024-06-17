@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-readonly class SubscriberRepository extends AbstractRepository implements SubscriberRepositoryInterface
+readonly class SubscriberRepository extends AbstractRelationBaseRepository implements SubscriberRepositoryInterface
 {
     /** @inheritDoc */
     public function getModel(): Subscriber
