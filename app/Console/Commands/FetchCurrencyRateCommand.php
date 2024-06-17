@@ -6,6 +6,7 @@ use App\Actions\FetchCurrencyRateAction;
 use App\Actions\StoreCurrencyRateAction;
 use App\DTOs\CurrencyRateDTO;
 use App\Enums\CurrencyCodeEnum;
+use App\Interfaces\VOs\CurrencyRateErrorVOInterface;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -31,7 +32,7 @@ class FetchCurrencyRateCommand extends Command
         StoreCurrencyRateAction $storeCurrencyRateAction
     ): void {
         $vo = $fetchCurrencyRate->execute();
-        if ($vo->hasError()) {
+        if ($vo instanceof CurrencyRateErrorVOInterface) {
             Log::error('Can\'t fetch currency rate', ['error' => $vo->getError()]);
             return;
         }
