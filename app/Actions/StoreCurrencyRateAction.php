@@ -32,10 +32,7 @@ class StoreCurrencyRateAction
             false
         );
 
-        if (
-            $lastRate?->buy_rate === $dto->getBuyRate()
-            && $lastRate->sale_rate === $dto->getSaleRate()
-        ) {
+        if ($this->isRatesEqual($lastRate, $dto)) {
             return $this->currencyRateRepository->updateById(
                 $lastRate->id,
                 [
@@ -44,10 +41,7 @@ class StoreCurrencyRateAction
             );
         }
 
-        if (
-            $lastRate?->buy_rate !== $dto->getBuyRate()
-            || $lastRate->sale_rate !== $dto->getSaleRate()
-        ) {
+        if ($this->isRatesChanged($lastRate, $dto)) {
             return $this->currencyRateRepository->create($dto->toArray());
         }
 
@@ -56,5 +50,17 @@ class StoreCurrencyRateAction
         }
 
         return $lastRate;
+    }
+
+    private function isRatesEqual(?CurrencyRate $lastRate, CurrencyRateDTO $dto): bool
+    {
+        return $lastRate?->buy_rate === $dto->getBuyRate()
+            && $lastRate->sale_rate === $dto->getSaleRate();
+    }
+
+    private function isRatesChanged(?CurrencyRate $lastRate, CurrencyRateDTO $dto): bool
+    {
+        return $lastRate?->buy_rate !== $dto->getBuyRate()
+            || $lastRate->sale_rate !== $dto->getSaleRate();
     }
 }
