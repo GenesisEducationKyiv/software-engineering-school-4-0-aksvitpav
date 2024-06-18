@@ -7,6 +7,7 @@ use App\Actions\StoreCurrencyRateAction;
 use App\Console\Commands\FetchCurrencyRateCommand;
 use App\DTOs\CurrencyRateDTO;
 use App\Enums\CurrencyCodeEnum;
+use App\VOs\CurrencyRateVO;
 use App\VOs\USDErrorRateVO;
 use App\VOs\USDRateVO;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -30,7 +31,7 @@ class FetchCurrencyRateCommandTest extends TestCase
         $mockFetchAction->shouldReceive('execute')
             ->once()
             ->andReturn(
-                new USDRateVO(
+                new CurrencyRateVO(
                     buyRate: $buyRate,
                     saleRate: $saleRate
                 )

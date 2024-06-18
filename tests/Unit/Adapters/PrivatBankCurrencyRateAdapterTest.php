@@ -4,6 +4,7 @@ namespace Tests\Unit\Adapters;
 
 use App\Adapters\PrivatBankCurrencyRateAdapter;
 use App\Enums\CurrencyCodeEnum;
+use App\VOs\CurrencyRateVO;
 use App\VOs\USDErrorRateVO;
 use App\VOs\USDRateVO;
 use GuzzleHttp\Client;
@@ -30,7 +31,7 @@ class PrivatBankCurrencyRateAdapterTest extends TestCase
         $adapter = new PrivatBankCurrencyRateAdapter($client);
         $rate = $adapter->getCurrencyRate();
 
-        $this->assertInstanceOf(USDRateVO::class, $rate);
+        $this->assertInstanceOf(CurrencyRateVO::class, $rate);
         $this->assertEquals(50.08, $rate->getBuyRate());
         $this->assertEquals(50.12, $rate->getSaleRate());
     }
