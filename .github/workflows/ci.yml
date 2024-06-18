@@ -22,3 +22,23 @@
 
         - name: Run PHPCodeSniffer
           run: ./vendor/bin/phpcs --report=full
+
+    tests:
+      name: Tests
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Setup PHP
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: '8.3'
+            coverage: xdebug
+
+        - name: Install composer dependencies
+          run: composer install -n --prefer-dist
+
+        - name: Run tests with coverage
+          run: ./vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-html=coverage-html
