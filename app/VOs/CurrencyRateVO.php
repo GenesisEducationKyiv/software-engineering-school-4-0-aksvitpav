@@ -5,7 +5,7 @@ namespace App\VOs;
 use App\Interfaces\VOs\CurrencyRateVOInterface;
 use UnexpectedValueException;
 
-class USDRateVO implements CurrencyRateVOInterface
+class CurrencyRateVO implements CurrencyRateVOInterface
 {
     /**
      * @param float $buyRate
