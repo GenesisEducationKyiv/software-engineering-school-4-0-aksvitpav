@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\Repositories\BaseRepositoryInterface;
+use App\Interfaces\Repositories\RepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-abstract readonly class AbstractBaseRepository implements BaseRepositoryInterface
+abstract readonly class AbstractRepository implements RepositoryInterface
 {
     /** @inheritDoc */
     public function getQuery(): Builder

@@ -7,8 +7,7 @@ use App\Models\CurrencyRate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
-readonly class CurrencyRateRepository extends AbstractRelationBaseRepository implements
-    CurrencyRateRepositoryInterface
+readonly class CurrencyRateRepository extends AbstractRepository implements CurrencyRateRepositoryInterface
 {
     /**
      * @return CurrencyRate

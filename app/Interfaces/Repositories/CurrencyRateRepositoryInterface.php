@@ -4,7 +4,7 @@ namespace App\Interfaces\Repositories;
 
 use Illuminate\Support\Carbon;
 
-interface CurrencyRateRepositoryInterface extends RelationRepositoryInterface
+interface CurrencyRateRepositoryInterface extends RepositoryInterface
 {
     /**
      * @param Carbon $olderThan
