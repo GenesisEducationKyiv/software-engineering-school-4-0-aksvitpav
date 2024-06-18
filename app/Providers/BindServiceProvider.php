@@ -34,7 +34,7 @@ class BindServiceProvider extends ServiceProvider
      */
     private function registerAdapters(): void
     {
-        $this->app->bind(CurrencyRateAdapterInterface::class, PrivatBankCurrencyRateAdapter::class);
+        $this->app->singleton(CurrencyRateAdapterInterface::class, PrivatBankCurrencyRateAdapter::class);
     }
 
     /**
@@ -42,7 +42,7 @@ class BindServiceProvider extends ServiceProvider
      */
     private function registerRepositories(): void
     {
-        $this->app->bind(CurrencyRateRepositoryInterface::class, CurrencyRateRepository::class);
-        $this->app->bind(SubscriberRepositoryInterface::class, SubscriberRepository::class);
+        $this->app->singleton(CurrencyRateRepositoryInterface::class, CurrencyRateRepository::class);
+        $this->app->singleton(SubscriberRepositoryInterface::class, SubscriberRepository::class);
     }
 }

@@ -6,8 +6,8 @@ use App\Enums\CurrencyCodeEnum;
 use App\Exceptions\CurrencyRateFetchingError;
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
 use App\Interfaces\VOs\CurrencyRateVOInterface;
+use App\VOs\CurrencyRateVO;
 use App\VOs\USDErrorRateVO;
-use App\VOs\USDRateVO;
 use GuzzleHttp\Client;
 use Throwable;
 use UnexpectedValueException;
@@ -74,7 +74,7 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
                 new CurrencyRateFetchingError('Currency rates not found in response.')
             );
 
-            return new USDRateVO(
+            return new CurrencyRateVO(
                 buyRate: $USDBuyRate,
                 saleRate: $USDSaleRate,
             );
