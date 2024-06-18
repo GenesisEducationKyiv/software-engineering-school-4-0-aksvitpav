@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\Repositories\PaginationRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-abstract readonly class AbstractPaginationRepository extends AbstractCrudRepository implements
+abstract readonly class AbstractPaginationRepository extends AbstractFindRepository implements
     PaginationRepositoryInterface
 {
     /** @inheritDoc */

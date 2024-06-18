@@ -5,7 +5,7 @@ namespace App\Interfaces\Repositories;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
-interface PaginationRepositoryInterface extends CrudRepositoryInterface
+interface PaginationRepositoryInterface
 {
     /**
      * @param int|null $page

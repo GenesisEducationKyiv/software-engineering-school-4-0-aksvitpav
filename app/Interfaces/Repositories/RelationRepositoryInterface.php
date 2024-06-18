@@ -4,7 +4,7 @@ namespace App\Interfaces\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 
-interface RelationRepositoryInterface extends PaginationRepositoryInterface
+interface RelationRepositoryInterface
 {
     /**
      * @param Model $model

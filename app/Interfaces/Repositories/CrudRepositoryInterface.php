@@ -4,7 +4,7 @@ namespace App\Interfaces\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 
-interface CrudRepositoryInterface extends FindRepositoryInterface
+interface CrudRepositoryInterface
 {
     /**
      * @param array<string, mixed> $conditions

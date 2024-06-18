@@ -6,7 +6,7 @@ use App\Interfaces\Repositories\FindRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-abstract readonly class AbstractFindRepository extends AbstractBaseRepository implements FindRepositoryInterface
+abstract readonly class AbstractFindRepository extends AbstractCrudRepository implements FindRepositoryInterface
 {
     /** @inheritDoc */
     public function getById(int $id, ?array $with = null, ?array $select = ['*']): Model
