@@ -6,6 +6,7 @@ use App\DTOs\CurrencyRateDTO;
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
 use App\Models\CurrencyRate;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class StoreCurrencyRateAction
 {
@@ -32,35 +33,30 @@ class StoreCurrencyRateAction
             false
         );
 
-        if ($this->isRatesEqual($lastRate, $dto)) {
-            return $this->currencyRateRepository->updateById(
-                $lastRate->id,
-                [
-                    'fetched_at' => $dto->getFetchedAt()
-                ]
-            );
-        }
-
-        if ($this->isRatesChanged($lastRate, $dto)) {
+        if (
+            ! $lastRate
+            || $this->isRatesChanged($lastRate, $dto)
+            || $this->isRatesOlderThan($lastRate, now()->subHour())
+        ) {
             return $this->currencyRateRepository->create($dto->toArray());
         }
 
-        if ($lastRate->fetched_at < now()->subHour()) {
-            return $this->currencyRateRepository->create($dto->toArray());
-        }
-
-        return $lastRate;
+        return $this->currencyRateRepository->updateById(
+            $lastRate->id,
+            [
+                'fetched_at' => $dto->getFetchedAt()
+            ]
+        );
     }
 
-    private function isRatesEqual(?CurrencyRate $lastRate, CurrencyRateDTO $dto): bool
+    private function isRatesChanged(CurrencyRate $lastRate, CurrencyRateDTO $dto): bool
     {
-        return $lastRate?->buy_rate === $dto->getBuyRate()
-            && $lastRate->sale_rate === $dto->getSaleRate();
-    }
-
-    private function isRatesChanged(?CurrencyRate $lastRate, CurrencyRateDTO $dto): bool
-    {
-        return $lastRate?->buy_rate !== $dto->getBuyRate()
+        return $lastRate->buy_rate !== $dto->getBuyRate()
             || $lastRate->sale_rate !== $dto->getSaleRate();
+    }
+
+    public function isRatesOlderThan(CurrencyRate $lastRate, Carbon $olderThan): bool
+    {
+        return $lastRate->fetched_at < $olderThan;
     }
 }
