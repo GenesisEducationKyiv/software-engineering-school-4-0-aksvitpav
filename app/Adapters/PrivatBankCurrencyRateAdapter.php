@@ -5,7 +5,6 @@ namespace App\Adapters;
 use App\Enums\CurrencyCodeEnum;
 use App\Exceptions\CurrencyRateFetchingError;
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
-use App\Interfaces\VOs\CurrencyRateErrorVOInterface;
 use App\Interfaces\VOs\CurrencyRateVOInterface;
 use App\VOs\USDErrorRateVO;
 use App\VOs\USDRateVO;
@@ -46,7 +45,7 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
     }
 
     /** @inheritDoc */
-    public function getCurrencyRate(): CurrencyRateVOInterface|CurrencyRateErrorVOInterface
+    public function getCurrencyRate(): CurrencyRateVOInterface
     {
         try {
             $response = $this->client->request('GET', $this->baseUrl, $this->options);
