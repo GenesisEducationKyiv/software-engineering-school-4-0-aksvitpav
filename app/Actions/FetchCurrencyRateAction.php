@@ -2,27 +2,29 @@
 
 namespace App\Actions;
 
-use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
 use App\Interfaces\VOs\CurrencyRateVOInterface;
+use App\Services\CurrencyRateService;
+use Exception;
 
 class FetchCurrencyRateAction
 {
     /**
-     * @param CurrencyRateAdapterInterface $apiAdapter
+     * @param CurrencyRateService $currencyRateService
      * @param CurrencyRateRepositoryInterface $currencyRateRepository
      */
     public function __construct(
-        protected CurrencyRateAdapterInterface $apiAdapter,
+        protected CurrencyRateService $currencyRateService,
         protected CurrencyRateRepositoryInterface $currencyRateRepository,
     ) {
     }
 
     /**
      * @return CurrencyRateVOInterface
+     * @throws Exception
      */
     public function execute(): CurrencyRateVOInterface
     {
-        return $this->apiAdapter->getCurrencyRate();
+        return $this->currencyRateService->getCurrencyRate();
     }
 }

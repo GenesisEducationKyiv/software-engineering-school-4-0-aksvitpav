@@ -14,7 +14,7 @@ use Leyton\LaravelCircuitBreaker\Circuit;
 use Leyton\LaravelCircuitBreaker\Transporters\Packet;
 use Throwable;
 
-class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
+class ABankCurrencyRateAdapter implements CurrencyRateAdapterInterface
 {
     /**
      * @var string
@@ -31,21 +31,14 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
      */
     public function __construct(protected Client $client)
     {
-        $this->baseUrl = 'https://api.privatbank.ua/p24api/pubinfo';
-
-        $this->options = [
-            'query' => [
-                'exchange' => 1,
-                'coursid' => 5
-            ],
-        ];
+        $this->baseUrl = 'https://a-bank.com.ua/backend/api/v1/legal/rates';
     }
 
     /** @inheritDoc */
     public function getCurrencyRate(): CurrencyRateVOInterface
     {
         $circuit = app()->make(Circuit::class);
-        $packet = $circuit->run("abank-api", function () {
+        $packet =  $circuit->run("abank-api", function () {
             try {
                 $response = $this->client->request('GET', $this->baseUrl, $this->options);
                 $requestContents = $response->getBody()->getContents();
@@ -55,18 +48,31 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
                     new CurrencyRateFetchingError('Fetched data has mismatch format.')
                 );
 
-                /** @var array<array{"ccy":string, "buy":float, "sale":float}> $data */
+                /** @var array{
+                 *     data: array<array{
+                 *         curA: string,
+                 *         curB: string,
+                 *         rate_sell: float,
+                 *         rate_buy: float
+                 *     }>,
+                 *     status: string,
+                 *     result: string,
+                 *     timestamp: string,
+                 *     request_ref: string,
+                 *     response_ref: string
+                 * } $data
+                 */
                 $data = json_decode($requestContents, true);
 
-                Log::channel('daily_currency_api')->info('privatbank', ['data' => $data]);
+                Log::channel('daily_currency_api')->info('abank', ['data' => $data]);
 
                 $USDBuyRate = null;
                 $USDSaleRate = null;
 
-                foreach ($data as $currency) {
-                    if ($currency['ccy'] === CurrencyCodeEnum::USD->value) {
-                        $USDBuyRate = $currency['buy'];
-                        $USDSaleRate = $currency['sale'];
+                foreach ($data['data'] as $currency) {
+                    if ($currency['curB'] === CurrencyCodeEnum::USD->value) {
+                        $USDBuyRate = $currency['rate_buy'];
+                        $USDSaleRate = $currency['rate_sell'];
                     }
                 }
 

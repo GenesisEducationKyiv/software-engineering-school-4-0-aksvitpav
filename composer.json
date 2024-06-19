@@ -10,7 +10,8 @@
         "darkaonline/l5-swagger": "^8.6",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "aksvitpav/laravel-circuit-breaker": "dev-main"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
@@ -36,6 +37,12 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "url": "https://github.com/aksvitpav/laravel-circuit-breaker",
+            "type": "git"
+        }
+    ],
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

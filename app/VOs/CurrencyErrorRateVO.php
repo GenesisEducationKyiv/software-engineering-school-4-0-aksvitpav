@@ -5,7 +5,7 @@ namespace App\VOs;
 use App\Interfaces\VOs\CurrencyRateVOInterface;
 use UnexpectedValueException;
 
-class USDErrorRateVO implements CurrencyRateVOInterface
+class CurrencyErrorRateVO implements CurrencyRateVOInterface
 {
     /**
      * @param string $errorMessage

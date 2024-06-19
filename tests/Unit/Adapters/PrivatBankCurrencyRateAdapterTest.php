@@ -4,9 +4,8 @@ namespace Tests\Unit\Adapters;
 
 use App\Adapters\PrivatBankCurrencyRateAdapter;
 use App\Enums\CurrencyCodeEnum;
+use App\VOs\CurrencyErrorRateVO;
 use App\VOs\CurrencyRateVO;
-use App\VOs\USDErrorRateVO;
-use App\VOs\USDRateVO;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
@@ -47,7 +46,7 @@ class PrivatBankCurrencyRateAdapterTest extends TestCase
         $adapter = new PrivatBankCurrencyRateAdapter($client);
         $rate = $adapter->getCurrencyRate();
 
-        $this->assertInstanceOf(USDErrorRateVO::class, $rate);
+        $this->assertInstanceOf(CurrencyErrorRateVO::class, $rate);
         $this->assertStringContainsString('Fetched data has mismatch format.', $rate->getError());
     }
 
@@ -68,7 +67,7 @@ class PrivatBankCurrencyRateAdapterTest extends TestCase
         $adapter = new PrivatBankCurrencyRateAdapter($client);
         $rate = $adapter->getCurrencyRate();
 
-        $this->assertInstanceOf(USDErrorRateVO::class, $rate);
+        $this->assertInstanceOf(CurrencyErrorRateVO::class, $rate);
         $this->assertStringContainsString('Currency rates not found in response.', $rate->getError());
     }
 }
