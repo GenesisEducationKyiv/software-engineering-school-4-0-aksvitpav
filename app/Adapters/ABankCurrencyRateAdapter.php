@@ -11,8 +11,8 @@ use App\VOs\CurrencyRateVO;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Leyton\LaravelCircuitBreaker\Circuit;
-use Leyton\LaravelCircuitBreaker\Transporters\Packet;
 use Throwable;
+use UnexpectedValueException;
 
 class ABankCurrencyRateAdapter implements CurrencyRateAdapterInterface
 {
@@ -49,7 +49,7 @@ class ABankCurrencyRateAdapter implements CurrencyRateAdapterInterface
                 );
 
                 /** @var array{
-                 *     data: array<array{
+                 *     data?: array<array{
                  *         curA: string,
                  *         curB: string,
                  *         rate_sell: float,
@@ -69,7 +69,7 @@ class ABankCurrencyRateAdapter implements CurrencyRateAdapterInterface
                 $USDBuyRate = null;
                 $USDSaleRate = null;
 
-                foreach ($data['data'] as $currency) {
+                foreach ($data['data'] ?? [] as $currency) {
                     if ($currency['curB'] === CurrencyCodeEnum::USD->value) {
                         $USDBuyRate = $currency['rate_buy'];
                         $USDSaleRate = $currency['rate_sell'];
@@ -90,7 +90,13 @@ class ABankCurrencyRateAdapter implements CurrencyRateAdapterInterface
             }
         });
 
-        /** @var Packet $packet */
-        return $packet->result;
+        /** @var CurrencyRateVOInterface $result */
+        $result = $packet->result;
+
+        if (!($result instanceof CurrencyRateVOInterface)) {
+            throw new UnexpectedValueException('Expected instance of CurrencyRateVOInterface.');
+        }
+
+        return $result;
     }
 }

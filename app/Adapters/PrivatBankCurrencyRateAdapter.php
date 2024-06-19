@@ -11,8 +11,8 @@ use App\VOs\CurrencyRateVO;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Leyton\LaravelCircuitBreaker\Circuit;
-use Leyton\LaravelCircuitBreaker\Transporters\Packet;
 use Throwable;
+use UnexpectedValueException;
 
 class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
 {
@@ -84,7 +84,13 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
             }
         });
 
-        /** @var Packet $packet */
-        return $packet->result;
+        /** @var CurrencyRateVOInterface $result */
+        $result = $packet->result;
+
+        if (!($result instanceof CurrencyRateVOInterface)) {
+            throw new UnexpectedValueException('Expected instance of CurrencyRateVOInterface.');
+        }
+
+        return $result;
     }
 }

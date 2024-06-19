@@ -70,9 +70,13 @@ class FetchCurrencyRateCommandTest extends TestCase
                 )
             );
 
-        Log::shouldReceive('error')
+        $mockLog = Mockery::mock();
+        $mockLog->shouldReceive('error')
             ->once()
             ->with('Can\'t fetch currency rate', ['error' => $errorMessage]);
+
+        Log::shouldReceive('channel')
+            ->andReturn($mockLog);
 
         $this->app->instance(FetchCurrencyRateAction::class, $mockFetchAction);
         $this->app->instance(StoreCurrencyRateAction::class, $mockStoreAction);
