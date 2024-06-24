@@ -3,13 +3,14 @@
 namespace App\Services;
 
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
+use App\Interfaces\Services\CurrencyRateServiceInterface;
 use App\Interfaces\VOs\CurrencyRateVOInterface;
 use App\VOs\CurrencyErrorRateVO;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class CurrencyRateService
+class CurrencyRateService implements CurrencyRateServiceInterface
 {
     /**
      * @param array<CurrencyRateAdapterInterface> $providers
@@ -34,6 +35,6 @@ class CurrencyRateService
             }
         }
 
-        return new CurrencyErrorRateVO('All currency providers failed.');
+        return new CurrencyErrorRateVO(errorMessage: 'All currency providers failed.');
     }
 }

@@ -86,7 +86,7 @@ class ABankCurrencyRateAdapter implements CurrencyRateAdapterInterface
                     saleRate: $USDSaleRate,
                 );
             } catch (Throwable $e) {
-                return new CurrencyErrorRateVO(errorMessage: $e->getMessage());
+                return new CurrencyErrorRateVO(errorMessage: $e->getMessage(), previous: $e->getPrevious());
             }
         });
 

@@ -6,6 +6,7 @@ use App\Adapters\ABankCurrencyRateAdapter;
 use App\Adapters\PrivatBankCurrencyRateAdapter;
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
+use App\Interfaces\Services\CurrencyRateServiceInterface;
 use App\Repositories\CurrencyRateRepository;
 use App\Repositories\SubscriberRepository;
 use App\Services\CurrencyRateService;
@@ -36,7 +37,7 @@ class BindServiceProvider extends ServiceProvider
      */
     private function registerServices(): void
     {
-        $this->app->singleton(CurrencyRateService::class, function ($app) {
+        $this->app->singleton(CurrencyRateServiceInterface::class, function ($app) {
             $client = new Client();
             $providers = [
                 new ABankCurrencyRateAdapter($client),

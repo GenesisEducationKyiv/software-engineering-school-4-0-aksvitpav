@@ -3,18 +3,18 @@
 namespace App\Actions;
 
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
+use App\Interfaces\Services\CurrencyRateServiceInterface;
 use App\Interfaces\VOs\CurrencyRateVOInterface;
-use App\Services\CurrencyRateService;
 use Exception;
 
 class FetchCurrencyRateAction
 {
     /**
-     * @param CurrencyRateService $currencyRateService
+     * @param CurrencyRateServiceInterface $currencyRateService
      * @param CurrencyRateRepositoryInterface $currencyRateRepository
      */
     public function __construct(
-        protected CurrencyRateService $currencyRateService,
+        protected CurrencyRateServiceInterface $currencyRateService,
         protected CurrencyRateRepositoryInterface $currencyRateRepository,
     ) {
     }
