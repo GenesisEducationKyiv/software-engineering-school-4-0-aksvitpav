@@ -12,6 +12,7 @@ parameters:
 
     paths:
         - app/
+        - tests/Architecture
 
     level: 9
 

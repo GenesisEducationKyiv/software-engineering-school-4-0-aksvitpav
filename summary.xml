@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<metrics generated="2024-06-25T23:24:22" pdepend="@package_version@" ahh="0.62068965517241" andc="0.085106382978723" calls="200" ccn="151" ccn2="156" cloc="652" clsa="2" clsc="37" eloc="1266" fanout="139" leafs="29" lloc="670" loc="2295" maxDIT="2" ncloc="1643" noc="39" nof="0" noi="7" nom="142" nop="22" roots="10">
+<metrics generated="2024-06-26T23:19:17" pdepend="@package_version@" ahh="0.62068965517241" andc="0.085106382978723" calls="200" ccn="151" ccn2="156" cloc="653" clsa="2" clsc="37" eloc="1267" fanout="140" leafs="29" lloc="671" loc="2297" maxDIT="2" ncloc="1644" noc="39" nof="0" noi="7" nom="142" nop="22" roots="10">
   <files>
     <file name="/app/app/Actions/ClearCurrencyRateAction.php" loc="26" cloc="6" eloc="15" lloc="6" ncloc="20"/>
     <file name="/app/app/Actions/ExistSubscriberAction.php" loc="27" cloc="7" eloc="15" lloc="6" ncloc="20"/>
@@ -15,7 +15,7 @@
     <file name="/app/app/Adapters/PrivatBankCurrencyRateAdapter.php" loc="97" cloc="12" eloc="67" lloc="41" ncloc="85"/>
     <file name="/app/app/Casts/CurrencyCast.php" loc="35" cloc="10" eloc="12" lloc="5" ncloc="25"/>
     <file name="/app/app/Console/Commands/ClearCurrencyRateCommand.php" loc="29" cloc="10" eloc="13" lloc="7" ncloc="19"/>
-    <file name="/app/app/Console/Commands/FetchCurrencyRateCommand.php" loc="50" cloc="12" eloc="30" lloc="17" ncloc="38"/>
+    <file name="/app/app/Console/Commands/FetchCurrencyRateCommand.php" loc="52" cloc="13" eloc="31" lloc="18" ncloc="39"/>
     <file name="/app/app/Console/Commands/SendDailyEmailsCommand.php" loc="25" cloc="5" eloc="14" lloc="8" ncloc="20"/>
     <file name="/app/app/DTOs/CurrencyRateDTO.php" loc="108" cloc="35" eloc="61" lloc="22" ncloc="73"/>
     <file name="/app/app/DTOs/SubscriberDTO.php" loc="79" cloc="25" eloc="44" lloc="16" ncloc="54"/>
@@ -27,7 +27,7 @@
     <file name="/app/app/Http/Controllers/SubscribeController.php" loc="73" cloc="41" eloc="25" lloc="16" ncloc="32"/>
     <file name="/app/app/Http/Requests/SubscribeRequest.php" loc="36" cloc="14" eloc="17" lloc="7" ncloc="22"/>
     <file name="/app/app/Http/Resources/CurrentRateResource.php" loc="43" cloc="19" eloc="18" lloc="9" ncloc="24"/>
-    <file name="/app/app/Jobs/SendDailyEmailJob.php" loc="50" cloc="8" eloc="35" lloc="20" ncloc="42"/>
+    <file name="/app/app/Jobs/Email/SendDailyEmailJob.php" loc="50" cloc="8" eloc="35" lloc="20" ncloc="42"/>
     <file name="/app/app/Mail/CurrentRateMail.php" loc="52" cloc="11" eloc="33" lloc="15" ncloc="41"/>
     <file name="/app/app/Models/CurrencyRate.php" loc="54" cloc="23" eloc="25" lloc="9" ncloc="31"/>
     <file name="/app/app/Models/Subscriber.php" loc="43" cloc="19" eloc="18" lloc="7" ncloc="24"/>
@@ -118,9 +118,9 @@
       <file name="/app/app/Console/Commands/ClearCurrencyRateCommand.php"/>
       <method name="handle" start="24" end="27" ccn="1" ccn2="1" loc="4" cloc="0" eloc="3" lloc="1" ncloc="4" npath="1" hnt="5" hnd="5" hv="11.609640474437" hd="8" hl="0.125" he="92.877123795494" ht="5.1598402108608" hb="0.0068362496969366" hi="1.4512050593046" mi="82.001716149821"/>
     </class>
-    <class name="FetchCurrencyRateCommand" fqname="App\Console\Commands\FetchCurrencyRateCommand" start="12" end="49" loc="38" cloc="12" eloc="14" lloc="7" ncloc="26" dit="2" noam="1" nocc="0" noom="0" nom="1" cr="0.15" rcr="0.1925" ca="0" cbo="5" ce="5" impl="0" cis="1" csz="3" npm="1" vars="2" varsi="2" varsnp="0" wmc="2" wmci="2" wmcnp="2">
+    <class name="FetchCurrencyRateCommand" fqname="App\Console\Commands\FetchCurrencyRateCommand" start="13" end="51" loc="39" cloc="13" eloc="14" lloc="7" ncloc="26" dit="2" noam="1" nocc="0" noom="0" nom="1" cr="0.15" rcr="0.1925" ca="0" cbo="6" ce="6" impl="0" cis="1" csz="3" npm="1" vars="2" varsi="2" varsnp="0" wmc="2" wmci="2" wmcnp="2">
       <file name="/app/app/Console/Commands/FetchCurrencyRateCommand.php"/>
-      <method name="handle" start="29" end="48" ccn="2" ccn2="2" loc="20" cloc="1" eloc="14" lloc="7" ncloc="19" npath="2" hnt="53" hnd="28" hv="254.78981086905" hd="9.1666666666667" hl="0.10909090909091" he="2335.5732662997" ht="129.75407034998" hb="0.058677879235487" hi="27.795252094806" mi="57.881280001526"/>
+      <method name="handle" start="31" end="50" ccn="2" ccn2="2" loc="20" cloc="1" eloc="14" lloc="7" ncloc="19" npath="2" hnt="53" hnd="28" hv="254.78981086905" hd="9.1666666666667" hl="0.10909090909091" he="2335.5732662997" ht="129.75407034998" hb="0.058677879235487" hi="27.795252094806" mi="57.881280001526"/>
     </class>
     <class name="SendDailyEmailsCommand" fqname="App\Console\Commands\SendDailyEmailsCommand" start="9" end="24" loc="16" cloc="5" eloc="3" lloc="1" ncloc="11" dit="2" noam="1" nocc="0" noom="0" nom="1" cr="0.15" rcr="0.1925" ca="0" cbo="2" ce="2" impl="0" cis="1" csz="3" npm="1" vars="2" varsi="2" varsnp="0" wmc="1" wmci="1" wmcnp="1">
       <file name="/app/app/Console/Commands/SendDailyEmailsCommand.php"/>
@@ -188,7 +188,7 @@
   </package>
   <package name="App\Jobs" noc="1" noi="0" nom="2" nof="0" cr="0.15" rcr="0.405">
     <class name="SendDailyEmailJob" fqname="App\Jobs\SendDailyEmailJob" start="17" end="49" loc="33" cloc="8" eloc="11" lloc="2" ncloc="25" dit="0" noam="0" nocc="0" noom="0" nom="2" cr="0.15" rcr="0.405" ca="1" cbo="5" ce="5" impl="2" cis="2" csz="2" npm="2" vars="0" varsi="0" varsnp="0" wmc="2" wmci="2" wmcnp="2">
-      <file name="/app/app/Jobs/SendDailyEmailJob.php"/>
+      <file name="/app/app/Jobs/Email/SendDailyEmailJob.php"/>
       <method name="__construct" start="28" end="32" ccn="1" ccn2="1" loc="5" cloc="0" eloc="2" lloc="0" ncloc="5" npath="1" hnt="2" hnd="2" hv="2" hd="2" hl="0.5" he="4" ht="0.22222222222222" hb="0.00083994736659658" hi="1" mi="91.191023588314"/>
       <method name="handle" start="38" end="48" ccn="1" ccn2="1" loc="11" cloc="0" eloc="9" lloc="2" ncloc="11" npath="1" hnt="18" hnd="14" hv="68.532388597037" hd="2.5" hl="0.4" he="171.33097149259" ht="9.518387305144" hb="0.010282593413122" hi="27.412955438815" mi="66.194718278612"/>
     </class>
