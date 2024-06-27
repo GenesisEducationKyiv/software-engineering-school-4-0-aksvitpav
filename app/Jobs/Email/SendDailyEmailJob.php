@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Email;
 
 use App\Actions\SetEmailedAtForSubscriberAction;
 use App\Interfaces\Jobs\EmailJobInterface;
