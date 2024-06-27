@@ -61,3 +61,6 @@ php artisan test
 ## Php depend
 ![Pyramid](overview-pyramid.svg)
 ![Pyramid](jdepend.svg)
+
+## Architecture
+![Architecture](architecture/scheme.png)
