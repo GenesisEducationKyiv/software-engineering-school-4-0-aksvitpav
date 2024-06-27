@@ -45,7 +45,7 @@ class PrivatBankCurrencyRateAdapter implements CurrencyRateAdapterInterface
     public function getCurrencyRate(): CurrencyRateVOInterface
     {
         $circuit = app()->make(Circuit::class);
-        $packet = $circuit->run("abank-api", function () {
+        $packet = $circuit->run("privatbank-api", function () {
             try {
                 $response = $this->client->request('GET', $this->baseUrl, $this->options);
                 $requestContents = $response->getBody()->getContents();
