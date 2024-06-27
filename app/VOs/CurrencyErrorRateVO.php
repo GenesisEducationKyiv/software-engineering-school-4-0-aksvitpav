@@ -3,15 +3,18 @@
 namespace App\VOs;
 
 use App\Interfaces\VOs\CurrencyRateVOInterface;
+use Throwable;
 use UnexpectedValueException;
 
-class USDErrorRateVO implements CurrencyRateVOInterface
+class CurrencyErrorRateVO implements CurrencyRateVOInterface
 {
     /**
      * @param string $errorMessage
+     * @param Throwable|null $previous
      */
     public function __construct(
-        protected string $errorMessage
+        protected string $errorMessage,
+        protected ?Throwable $previous = null
     ) {
     }
 
@@ -37,6 +40,14 @@ class USDErrorRateVO implements CurrencyRateVOInterface
     public function getError(): string
     {
         return $this->errorMessage;
+    }
+
+    /**
+     * @return Throwable|null
+     */
+    public function getPrevious(): ?Throwable
+    {
+        return $this->previous;
     }
 
     /**

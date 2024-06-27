@@ -2,8 +2,7 @@
 
 namespace Tests\Unit\Adapters;
 
-use App\Adapters\PrivatBankCurrencyRateAdapter;
-use App\Enums\CurrencyCodeEnum;
+use App\Adapters\ABankCurrencyRateAdapter;
 use App\VOs\CurrencyErrorRateVO;
 use App\VOs\CurrencyRateVO;
 use GuzzleHttp\Client;
@@ -11,7 +10,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 use Tests\TestCase;
 
-class PrivatBankCurrencyRateAdapterTest extends TestCase
+class ABankCurrencyRateAdapterTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -23,17 +22,25 @@ class PrivatBankCurrencyRateAdapterTest extends TestCase
     public function test_it_fetches_usd_rates_successfully()
     {
         $mockResponse = new Response(200, [], json_encode([
-            [
-                'ccy' => CurrencyCodeEnum::USD->value,
-                'buy' => 50.08,
-                'sale' => 50.12,
+            'data' => [
+                [
+                    'curA' => 'UAH',
+                    'curB' => 'USD',
+                    'rate_sell' => 50.12,
+                    'rate_buy' => 50.08,
+                ],
             ],
+            'status' => 'success',
+            'result' => 'OK',
+            'timestamp' => '2024-06-19T12:00:00Z',
+            'request_ref' => 'abc123',
+            'response_ref' => 'xyz789',
         ]));
 
         $mockHandler = new MockHandler([$mockResponse]);
         $client = new Client(['handler' => $mockHandler]);
 
-        $adapter = new PrivatBankCurrencyRateAdapter($client);
+        $adapter = new ABankCurrencyRateAdapter($client);
         $rate = $adapter->getCurrencyRate();
 
         $this->assertInstanceOf(CurrencyRateVO::class, $rate);
@@ -49,7 +56,7 @@ class PrivatBankCurrencyRateAdapterTest extends TestCase
         $mockHandler = new MockHandler([$mockResponse]);
         $client = new Client(['handler' => $mockHandler]);
 
-        $adapter = new PrivatBankCurrencyRateAdapter($client);
+        $adapter = new ABankCurrencyRateAdapter($client);
         $rate = $adapter->getCurrencyRate();
 
         $this->assertInstanceOf(CurrencyErrorRateVO::class, $rate);
@@ -61,16 +68,26 @@ class PrivatBankCurrencyRateAdapterTest extends TestCase
     {
         $mockResponse = new Response(200, [], json_encode([
             [
-                'ccy' => 'EUR',
-                'buy' => 50.05,
-                'sale' => 50.10,
+                'data' => [
+                    [
+                        'curA' => 'UAH',
+                        'curB' => 'USD',
+                        'rate_sell' => 50.12,
+                        'rate_buy' => 50.08,
+                    ],
+                ],
+                'status' => 'success',
+                'result' => 'OK',
+                'timestamp' => '2024-06-19T12:00:00Z',
+                'request_ref' => 'abc123',
+                'response_ref' => 'xyz789',
             ],
         ]));
 
         $mockHandler = new MockHandler([$mockResponse]);
         $client = new Client(['handler' => $mockHandler]);
 
-        $adapter = new PrivatBankCurrencyRateAdapter($client);
+        $adapter = new ABankCurrencyRateAdapter($client);
         $rate = $adapter->getCurrencyRate();
 
         $this->assertInstanceOf(CurrencyErrorRateVO::class, $rate);

@@ -32,7 +32,7 @@ class FetchCurrencyRateCommand extends Command
     ): void {
         $vo = $fetchCurrencyRate->execute();
         if ($vo->hasError()) {
-            Log::error('Can\'t fetch currency rate', ['error' => $vo->getError()]);
+            Log::channel('daily_currency_api')->error('Can\'t fetch currency rate', ['error' => $vo->getError()]);
             return;
         }
 

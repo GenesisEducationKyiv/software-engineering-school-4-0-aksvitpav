@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Adapters\ABankCurrencyRateAdapter;
 use App\Adapters\PrivatBankCurrencyRateAdapter;
-use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
+use App\Interfaces\Services\CurrencyRateServiceInterface;
 use App\Repositories\CurrencyRateRepository;
 use App\Repositories\SubscriberRepository;
+use App\Services\CurrencyRateService;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class BindServiceProvider extends ServiceProvider
@@ -17,8 +20,8 @@ class BindServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->registerAdapters();
         $this->registerRepositories();
+        $this->registerServices();
     }
 
     /**
@@ -32,9 +35,17 @@ class BindServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    private function registerAdapters(): void
+    private function registerServices(): void
     {
-        $this->app->singleton(CurrencyRateAdapterInterface::class, PrivatBankCurrencyRateAdapter::class);
+        $this->app->singleton(CurrencyRateServiceInterface::class, function ($app) {
+            $client = new Client();
+            $providers = [
+                new ABankCurrencyRateAdapter($client),
+                new PrivatBankCurrencyRateAdapter($client),
+            ];
+
+            return new CurrencyRateService($providers);
+        });
     }
 
     /**
