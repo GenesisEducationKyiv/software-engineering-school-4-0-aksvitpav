@@ -4,8 +4,8 @@ namespace App\Jobs\Email;
 
 use App\Actions\SetEmailedAtForSubscriberAction;
 use App\Interfaces\Jobs\EmailJobInterface;
+use App\Interfaces\VOs\CurrencyRateVOInterface;
 use App\Mail\CurrentRateMail;
-use App\Models\CurrencyRate;
 use App\Models\Subscriber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,11 +23,11 @@ class SendDailyEmailJob implements ShouldQueue, EmailJobInterface
 
     /**
      * @param Subscriber $subscriber
-     * @param CurrencyRate $currencyRate
+     * @param CurrencyRateVOInterface $currencyRate
      */
     public function __construct(
         public Subscriber $subscriber,
-        public CurrencyRate $currencyRate,
+        public CurrencyRateVOInterface $currencyRate,
     ) {
     }
 
@@ -39,8 +39,8 @@ class SendDailyEmailJob implements ShouldQueue, EmailJobInterface
     {
         Mail::to($this->subscriber->email)->send(
             new CurrentRateMail(
-                USDBuyRate: $this->currencyRate->buy_rate,
-                USDSaleRate: $this->currencyRate->sale_rate
+                USDBuyRate: $this->currencyRate->getBuyRate(),
+                USDSaleRate: $this->currencyRate->getSaleRate(),
             )
         );
 

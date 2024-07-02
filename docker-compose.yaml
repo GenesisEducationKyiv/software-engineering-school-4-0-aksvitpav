@@ -89,6 +89,7 @@ services:
       - mail
     networks:
       - backend_currency
+      - backend_subscriber
 
   app-subscriber:
     build:
@@ -113,6 +114,7 @@ services:
       - mail
     networks:
       - backend_subscriber
+      - backend_currency
 
   nginx-currency:
     container_name: se_app_currency_nginx
