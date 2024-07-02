@@ -34,13 +34,13 @@ class CurrencyRateAdapter implements CurrencyRateAdapterInterface
         $response = $this->client->request('GET', $this->baseUrl, $this->options);
         $requestContents = $response->getBody()->getContents();
 
-        if(!json_validate($requestContents)) {
+        if (!json_validate($requestContents)) {
             throw new CurrencyRateFetchingError('Fetched data has mismatch format.');
         }
 
         /** @var array{
-         *     buy: float,
-         *     sale: float,
+         *     buy?: float,
+         *     sale?: float,
          * } $data
          */
         $data = json_decode($requestContents, true);
@@ -48,7 +48,7 @@ class CurrencyRateAdapter implements CurrencyRateAdapterInterface
         $USDBuyRate = $data['buy'] ?? null;
         $USDSaleRate = $data['sale'] ?? null;
 
-        if(!($USDBuyRate && $USDSaleRate)) {
+        if (!($USDBuyRate && $USDSaleRate)) {
             throw new CurrencyRateFetchingError('Currency rates not found in response.');
         }
 

@@ -3,10 +3,8 @@
 namespace Tests\Architecture;
 
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
-use App\Interfaces\Jobs\EmailJobInterface;
 use App\Repositories\AbstractRepository;
 use App\Repositories\CurrencyRateRepository;
-use App\Repositories\SubscriberRepository;
 use Exception;
 use Illuminate\Mail\Mailable;
 use PHPat\Selector\Selector;
@@ -66,18 +64,6 @@ class ArchitectureTest
     }
 
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function test_jobs_implementation(): BuildStep
-    {
-        return PHPat::rule()
-            ->classes(Selector::inNamespace('App\Jobs\Email'))
-            ->shouldImplement()
-            ->classes(
-                Selector::classname(EmailJobInterface::class),
-            )
-            ->because('Email jobs should implement EmailJobInterface class');
-    }
-
-    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_mails_extend_mailable_class(): BuildStep
     {
         return PHPat::rule()
@@ -95,7 +81,6 @@ class ArchitectureTest
         return PHPat::rule()
             ->classes(
                 Selector::classname(CurrencyRateRepository::class),
-                Selector::classname(SubscriberRepository::class)
             )
             ->shouldExtend()
             ->classes(

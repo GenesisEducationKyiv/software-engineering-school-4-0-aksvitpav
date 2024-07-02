@@ -3,6 +3,9 @@
     static-analysis:
       name: Static Analysis
       runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          service: [ currency, subscriber ]
 
       steps:
         - name: Checkout code
@@ -16,12 +19,15 @@
 
         - name: Install composer dependencies
           run: composer install -n --prefer-dist
+          working-directory: services/${{ matrix.service }}
 
         - name: Run PHPStan
           run: ./vendor/bin/phpstan --error-format=github
+          working-directory: services/${{ matrix.service }}
 
         - name: Run PHPCodeSniffer
           run: ./vendor/bin/phpcs --report=full
+          working-directory: services/${{ matrix.service }}
 
     tests:
       name: Tests
@@ -39,6 +45,8 @@
 
         - name: Install composer dependencies
           run: composer install -n --prefer-dist
+          working-directory: services/${{ matrix.service }}
 
         - name: Run tests with coverage
           run: ./vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-html=coverage-html
+          working-directory: services/${{ matrix.service }}

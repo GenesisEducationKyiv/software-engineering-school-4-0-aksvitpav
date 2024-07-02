@@ -7,7 +7,6 @@ use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
 use App\Jobs\Email\SendDailyEmailJob;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Log;
 
 class SendDailyEmailsAction
 {
@@ -33,11 +32,6 @@ class SendDailyEmailsAction
         $startToday = now()->startOfDay();
 
         $currencyRate = $this->currencyRateAdapter->getCurrencyRate();
-
-        if (!$currencyRate) {
-            Log::error('Current rate not found. Can\'t send mails.');
-            return;
-        }
 
         $subscribers = $this->subscriberRepository->getNotEmailedSubscribers($startToday);
 

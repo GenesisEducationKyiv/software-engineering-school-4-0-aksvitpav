@@ -15,12 +15,23 @@ class RabbitMQService implements RabbitMQServiceInterface
 
     public function __construct()
     {
+        /** @var string $host */
+        $host = env('RABBITMQ_HOST');
+        /** @var string $port */
+        $port = env('RABBITMQ_PORT');
+        /** @var string $user */
+        $user = env('RABBITMQ_USER');
+        /** @var string $password */
+        $password = env('RABBITMQ_PASSWORD');
+        /** @var string $vhost */
+        $vhost = env('RABBITMQ_VHOST');
+
         $this->connection = new AMQPStreamConnection(
-            host: env('RABBITMQ_HOST'),
-            port: env('RABBITMQ_PORT'),
-            user: env('RABBITMQ_USER'),
-            password: env('RABBITMQ_PASSWORD'),
-            vhost: env('RABBITMQ_VHOST'),
+            host: $host,
+            port: $port,
+            user: $user,
+            password: $password,
+            vhost: $vhost,
         );
 
         $this->channel = $this->connection->channel();
