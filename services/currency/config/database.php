@@ -165,6 +165,14 @@ return [
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
 
+        'mq' => [
+            'url' => env('MQ_REDIS_URL'),
+            'host' => env('MQ_REDIS_HOST', '127.0.0.1'),
+            'username' => env('MQ_REDIS_USERNAME'),
+            'password' => env('MQ_REDIS_PASSWORD'),
+            'port' => env('MQ_REDIS_PORT', '6379'),
+            'database' => env('MQ_REDIS_DB', '1'),
+        ],
     ],
 
 ];

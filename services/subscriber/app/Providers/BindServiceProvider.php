@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
+use App\Interfaces\Services\RabbitMQServiceInterface;
 use App\Repositories\SubscriberRepository;
+use App\Services\RabbitMQService;
 use Illuminate\Support\ServiceProvider;
 
 class BindServiceProvider extends ServiceProvider
@@ -14,6 +16,7 @@ class BindServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerRepositories();
+        $this->registerServices();
     }
 
     /**
@@ -30,5 +33,13 @@ class BindServiceProvider extends ServiceProvider
     private function registerRepositories(): void
     {
         $this->app->singleton(SubscriberRepositoryInterface::class, SubscriberRepository::class);
+    }
+
+    /**
+     * @return void
+     */
+    private function registerServices(): void
+    {
+        $this->app->bind(RabbitMQServiceInterface::class, RabbitMQService::class);
     }
 }

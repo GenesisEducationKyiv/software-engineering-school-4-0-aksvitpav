@@ -33,6 +33,7 @@ RUN apk add --no-cache $PHPIZE_DEPS --virtual php-ext-deps && \
         docker-php-ext-enable redis && \
         docker-php-ext-configure opcache --enable-opcache && \
         docker-php-ext-install opcache && \
+        docker-php-ext-install sockets && \
         pecl install xdebug && \
         apk del php-ext-deps
 

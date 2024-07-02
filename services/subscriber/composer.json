@@ -8,7 +8,8 @@
         "php": "^8.2",
         "darkaonline/l5-swagger": "^8.6",
         "laravel/framework": "^11.9",
-        "laravel/sanctum": "^4.0"
+        "laravel/sanctum": "^4.0",
+        "php-amqplib/php-amqplib": "^2.8"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",

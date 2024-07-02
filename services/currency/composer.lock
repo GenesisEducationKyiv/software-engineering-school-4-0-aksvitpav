@@ -4,8 +4,52 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "54e01cdb4816421282051fda2e60adf0",
+    "content-hash": "41ccde54808d93fdcbcb08190cc598c9",
     "packages": [
+        {
+            "name": "aksvitpav/laravel-circuit-breaker",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aksvitpav/laravel-circuit-breaker",
+                "reference": "b9122217b2a87b54708b84d4f292c224382ba08b"
+            },
+            "require": {
+                "illuminate/support": "~8|~9|~10|~11",
+                "php": "^8.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Leyton\\LaravelCircuitBreaker\\LaravelCircuitBreakerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Leyton\\LaravelCircuitBreaker\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vitaly Aksonov",
+                    "email": "aksvitpav@gmail.com"
+                }
+            ],
+            "description": "The Laravel implementation for The Circuit breaker pattern",
+            "keywords": [
+                "api",
+                "circuit breaker",
+                "laravel",
+                "php"
+            ],
+            "time": "2024-06-18T23:30:35+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.12.1",
@@ -9925,7 +9969,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "aksvitpav/laravel-circuit-breaker": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

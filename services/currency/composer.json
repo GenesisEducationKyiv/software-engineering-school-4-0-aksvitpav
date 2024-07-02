@@ -6,10 +6,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "aksvitpav/laravel-circuit-breaker": "dev-main",
         "darkaonline/l5-swagger": "^8.6",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
-        "aksvitpav/laravel-circuit-breaker": "dev-main"
+        "php-amqplib/php-amqplib": "^2.8"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
