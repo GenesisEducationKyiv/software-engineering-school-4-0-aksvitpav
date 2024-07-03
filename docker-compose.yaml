@@ -52,6 +52,22 @@ services:
     networks:
       - backend_subscriber
 
+  db-mailer:
+    image: postgres
+    container_name: se_db_mailer
+    restart: unless-stopped
+    ports:
+      - "54332:5432"
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_DB=${DB_DATABASE:-se_db_mailer}
+      - POSTGRES_USER=${DB_USERNAME:-aksonov}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-xda5gzxda5gz}
+    volumes:
+      - db_data_mailer:/var/lib/postgresql/data
+    networks:
+      - backend_mailer
+
   redis-currency:
     image: redis:7-alpine3.19
     container_name: se_redis_currency
@@ -74,14 +90,25 @@ services:
     networks:
       - backend_subscriber
 
+  redis-mailer:
+    image: redis:7-alpine3.19
+    container_name: se_redis_mailer
+    restart: always
+    expose:
+      - 63802
+    ports:
+      - "63802:6379"
+    networks:
+      - backend_mailer
+
   rabbitmq:
     image: rabbitmq:3.9-management-alpine
     ports:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - backend_currency
       - backend_subscriber
+      - backend_mailer
 
   app-currency:
     build:
@@ -103,7 +130,6 @@ services:
       - rabbitmq
       - redis-currency
       - db-currency
-      - mail
     networks:
       - backend_currency
       - backend_subscriber
@@ -128,10 +154,32 @@ services:
       - rabbitmq
       - redis-subscriber
       - db-subscriber
-      - mail
     networks:
       - backend_subscriber
       - backend_currency
+
+  app-mailer:
+    build:
+      context: ./services/mailer
+      dockerfile: Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: se_app_mailer
+    image: se_app_mailer:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    volumes:
+      - ./services/mailer:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/mailer.conf:/usr/local/etc/php-fpm.d/www.conf
+    depends_on:
+      - rabbitmq
+      - redis-mailer
+      - mail
+    networks:
+      - backend_mailer
 
   nginx-currency:
     container_name: se_app_currency_nginx
@@ -187,21 +235,21 @@ services:
     networks:
       - backend_currency
 
-  queue-subsciber:
-    image: se_app_subscriber:latest
-    container_name: se_queue_subscriber
+  queue-mailer:
+    image: se_app_mailer:latest
+    container_name: se_queue_mailer
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
     volumes:
-      - ./services/subscriber:/app
+      - ./services/mailer:/app
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
-      - ./docker/php/subscriber.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./docker/php/mailer.conf:/usr/local/etc/php-fpm.d/www.conf
     command: php artisan queue:work
     depends_on:
-      - app-subscriber
+      - app-mailer
     networks:
-      - backend_subscriber
+      - backend_mailer
 
   schedule-currency:
     image: se_app_currency:latest
@@ -242,16 +290,18 @@ services:
       - "8025:8025"
       - "1025:1025"
     networks:
-      - backend_currency
-      - backend_subscriber
+      - backend_mailer
 
 volumes:
   db_data:
   db_data_currency:
   db_data_subscriber:
+  db_data_mailer:
 
 networks:
   backend_currency:
     driver: bridge
   backend_subscriber:
+    driver: bridge
+  backend_mailer:
     driver: bridge

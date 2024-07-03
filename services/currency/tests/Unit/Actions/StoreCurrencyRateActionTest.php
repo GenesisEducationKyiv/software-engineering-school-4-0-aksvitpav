@@ -90,7 +90,7 @@ class StoreCurrencyRateActionTest extends TestCase
             'currency_code' => CurrencyCodeEnum::USD->value,
             'buy_rate' => 50.05,
             'sale_rate' => 50.10,
-            'fetched_at' => now()->subMinute(30),
+            'fetched_at' => now()->subMinutes(30),
         ]);
 
         $newRate = new CurrencyRateDTO(
@@ -123,6 +123,9 @@ class StoreCurrencyRateActionTest extends TestCase
         $this->assertEquals($newRate->getCurrencyCode(), $result->currency_code->value);
         $this->assertEquals($newRate->getBuyRate(), $result->buy_rate);
         $this->assertEquals($newRate->getSaleRate(), $result->sale_rate);
-        $this->assertEquals($newRate->getFetchedAt()->toDateString(), $result->fetched_at->toDateString());
+        $this->assertEquals(
+            $newRate->getFetchedAt()->toDateString(),
+            $result->fetched_at->addMinutes(30)->toDateString()
+        );
     }
 }

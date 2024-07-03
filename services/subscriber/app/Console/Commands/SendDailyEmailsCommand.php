@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Actions\SendDailyEmailsAction;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class SendDailyEmailsCommand extends Command
 {
@@ -14,6 +15,7 @@ class SendDailyEmailsCommand extends Command
     /**
      * @param SendDailyEmailsAction $sendDailyEmailsAction
      * @return void
+     * @throws BindingResolutionException
      */
     public function handle(SendDailyEmailsAction $sendDailyEmailsAction): void
     {

@@ -5,7 +5,7 @@
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          service: [ currency, subscriber ]
+          service: [ currency, subscriber, mailer ]
 
       steps:
         - name: Checkout code
