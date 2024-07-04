@@ -20,86 +20,46 @@ services:
       - backend_currency
       - backend_subscriber
 
-  db-currency:
-    image: postgres
-    container_name: se_db_currency
+  db:
+    image: postgres:alpine3.19
+    container_name: se_db
     restart: unless-stopped
     ports:
       - "54330:5432"
     environment:
-      - POSTGRES_HOST=localhost
-      - POSTGRES_DB=${DB_DATABASE:-se_db_currency}
-      - POSTGRES_USER=${DB_USERNAME:-aksonov}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-xda5gzxda5gz}
+      POSTGRES_HOST: "localhost"
+      POSTGRES_MULTIPLE_DATABASES: "se_db_currency, se_db_subscriber, se_db_mailer"
+      POSTGRES_USER: "aksonov"
+      POSTGRES_PASSWORD: "xda5gzxda5gz"
     volumes:
-      - db_data_currency:/var/lib/postgresql/data
+      - se_db_data:/var/lib/postgresql/data
+      - ./docker/db/init.sh:/docker-entrypoint-initdb.d/init.sh
     networks:
       - backend_currency
-
-  db-subscriber:
-    image: postgres
-    container_name: se_db_subscriber
-    restart: unless-stopped
-    ports:
-      - "54331:5432"
-    environment:
-      - POSTGRES_HOST=localhost
-      - POSTGRES_DB=${DB_DATABASE:-se_db_subscriber}
-      - POSTGRES_USER=${DB_USERNAME:-aksonov}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-xda5gzxda5gz}
-    volumes:
-      - db_data_subscriber:/var/lib/postgresql/data
-    networks:
       - backend_subscriber
-
-  db-mailer:
-    image: postgres
-    container_name: se_db_mailer
-    restart: unless-stopped
-    ports:
-      - "54332:5432"
-    environment:
-      - POSTGRES_HOST=localhost
-      - POSTGRES_DB=${DB_DATABASE:-se_db_mailer}
-      - POSTGRES_USER=${DB_USERNAME:-aksonov}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-xda5gzxda5gz}
-    volumes:
-      - db_data_mailer:/var/lib/postgresql/data
-    networks:
       - backend_mailer
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  redis-currency:
+  redis:
     image: redis:7-alpine3.19
-    container_name: se_redis_currency
+    container_name: se_redis
     restart: always
     expose:
       - 63800
     ports:
       - "63800:6379"
+    volumes:
+      - se_redis_data:/data
     networks:
       - backend_currency
-
-  redis-subscriber:
-    image: redis:7-alpine3.19
-    container_name: se_redis_subscriber
-    restart: always
-    expose:
-      - 63801
-    ports:
-      - "63801:6379"
-    networks:
       - backend_subscriber
-
-  redis-mailer:
-    image: redis:7-alpine3.19
-    container_name: se_redis_mailer
-    restart: always
-    expose:
-      - 63802
-    ports:
-      - "63802:6379"
-    networks:
       - backend_mailer
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
 
   rabbitmq:
     image: rabbitmq:3.9-management-alpine
@@ -128,8 +88,8 @@ services:
       - ./docker/php/currency.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - rabbitmq
-      - redis-currency
-      - db-currency
+      - redis
+      - db
     networks:
       - backend_currency
       - backend_subscriber
@@ -152,8 +112,8 @@ services:
       - ./docker/php/subscriber.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - rabbitmq
-      - redis-subscriber
-      - db-subscriber
+      - redis
+      - db
     networks:
       - backend_subscriber
       - backend_currency
@@ -176,7 +136,8 @@ services:
       - ./docker/php/mailer.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - rabbitmq
-      - redis-mailer
+      - redis
+      - db
       - mail
     networks:
       - backend_mailer
@@ -293,10 +254,8 @@ services:
       - backend_mailer
 
 volumes:
-  db_data:
-  db_data_currency:
-  db_data_subscriber:
-  db_data_mailer:
+  se_db_data:
+  se_redis_data:
 
 networks:
   backend_currency:
