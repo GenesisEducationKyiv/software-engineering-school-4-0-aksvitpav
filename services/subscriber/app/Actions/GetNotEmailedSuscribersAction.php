@@ -2,53 +2,40 @@
 
 namespace App\Actions;
 
+use App\Commands\ReturnSubscribersCommand;
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
 use App\Interfaces\Services\RabbitMQServiceInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Carbon;
 
-class SendDailyEmailsAction
+class GetNotEmailedSuscribersAction
 {
     /**
      * @param SubscriberRepositoryInterface $subscriberRepository
-     * @param SetEmailedAtForSubscriberAction $setEmailedAtAction
      * @param CurrencyRateAdapterInterface $currencyRateAdapter
      * @param RabbitMQServiceInterface $rabbitMQService
+     * @param ReturnSubscribersCommand $returnSubscribersCommand
      */
     public function __construct(
         protected SubscriberRepositoryInterface $subscriberRepository,
-        protected SetEmailedAtForSubscriberAction $setEmailedAtAction,
         protected CurrencyRateAdapterInterface $currencyRateAdapter,
         protected RabbitMQServiceInterface $rabbitMQService,
+        protected ReturnSubscribersCommand $returnSubscribersCommand,
     ) {
     }
 
     /**
+     * @param Carbon $date
      * @return void
      * @throws BindingResolutionException
      */
-    public function execute(): void
+    public function execute(Carbon $date): void
     {
-        $startToday = now()->startOfDay();
-
         $currencyRate = $this->currencyRateAdapter->getCurrencyRate();
 
-        $subscribers = $this->subscriberRepository->getNotEmailedSubscribers($startToday);
+        $subscribers = $this->subscriberRepository->getNotEmailedSubscribers($date);
 
-        foreach ($subscribers as $subscriber) {
-            /** @var string $message */
-            $message = json_encode([
-                'email' => $subscriber->email,
-                'buy_rate' => $currencyRate->getBuyRate(),
-                'sale_rate' => $currencyRate->getSaleRate(),
-            ]);
-
-            $this->rabbitMQService->sendMessage(
-                'email',
-                $message
-            );
-
-            $this->setEmailedAtAction->execute($subscriber->id);
-        }
+        $this->returnSubscribersCommand->execute($currencyRate, $subscribers);
     }
 }

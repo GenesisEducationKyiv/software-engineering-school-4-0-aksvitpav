@@ -6,17 +6,17 @@ use App\Interfaces\Services\RabbitMQServiceInterface;
 use App\Jobs\Email\SendDailyEmailJob;
 use Illuminate\Console\Command;
 
-class SendEmailsConsumer extends Command
+class RabbitMQConsumer extends Command
 {
     /**
      * @var string
      */
-    protected $signature = 'app:send-emails';
+    protected $signature = 'app:rabbitmq-consumer';
 
     /**
      * @var string
      */
-    protected $description = 'Send emails consumer';
+    protected $description = 'RabbitMQ consumer';
 
     /**
      * @param RabbitMQServiceInterface $rabbitMQService
@@ -24,22 +24,24 @@ class SendEmailsConsumer extends Command
      */
     public function handle(RabbitMQServiceInterface $rabbitMQService): void
     {
-        $rabbitMQService->consumeMessages('email', function ($message) {
+        $rabbitMQService->consumeMessages('return-subscribers', function ($message) {
             /** @var object{
-             *     email: string,
+             *     emails: array<string>,
              *     buy_rate: float,
              *     sale_rate: float,
              * } $data
              */
             $data = json_decode($message->getBody());
 
-            SendDailyEmailJob::dispatch(
-                $data->email,
-                $data->buy_rate,
-                $data->sale_rate
-            );
+            foreach ($data->emails as $email) {
+                SendDailyEmailJob::dispatch(
+                    $email,
+                    $data->buy_rate,
+                    $data->sale_rate
+                );
 
-            $this->info('Email sent to: ' . $data->email);
+                $this->info('Email sent to: ' . $email);
+            }
         });
     }
 }

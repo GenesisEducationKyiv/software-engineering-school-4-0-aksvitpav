@@ -67,8 +67,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - backend_subscriber
-      - backend_mailer
+      - rabbit-mq
 
   app-currency:
     build:
@@ -117,6 +116,7 @@ services:
     networks:
       - backend_subscriber
       - backend_currency
+      - rabbit-mq
 
   app-mailer:
     build:
@@ -141,6 +141,7 @@ services:
       - mail
     networks:
       - backend_mailer
+      - rabbit-mq
 
   nginx-currency:
     container_name: se_app_currency_nginx
@@ -263,4 +264,6 @@ networks:
   backend_subscriber:
     driver: bridge
   backend_mailer:
+    driver: bridge
+  rabbit-mq:
     driver: bridge
