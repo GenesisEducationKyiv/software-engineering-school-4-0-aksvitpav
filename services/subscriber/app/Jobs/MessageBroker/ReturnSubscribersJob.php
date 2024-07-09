@@ -16,7 +16,9 @@ class ReturnSubscribersJob implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
+        /** @var array{"saleRate":float, "buyRate":float} $currencyRate */
         protected array $currencyRate,
+        /** @var array{array{"id":int, "email":string}} $subscribers */
         protected array $subscribers
     ) {
     }

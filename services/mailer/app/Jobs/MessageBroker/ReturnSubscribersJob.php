@@ -19,8 +19,7 @@ class ReturnSubscribersJob implements ShouldQueue
     public function __construct(
         /** @var array{"saleRate":float, "buyRate":float} $currencyRate */
         protected array $currencyRate,
-
-        /** @var array{"id":int, "email":string} $subscribers */
+        /** @var array{array{"id":int, "email":string}} $subscribers */
         protected array $subscribers
     ) {
     }

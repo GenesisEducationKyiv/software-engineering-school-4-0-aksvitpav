@@ -18,8 +18,10 @@ class GetSubscribersJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function handle(CurrencyRateAdapterInterface $currencyRateAdapter, SubscriberRepositoryInterface $subscriberRepository): void
-    {
+    public function handle(
+        CurrencyRateAdapterInterface $currencyRateAdapter,
+        SubscriberRepositoryInterface $subscriberRepository
+    ): void {
         $date = now()->startOfDay();
         $rate = $currencyRateAdapter->getCurrencyRate();
         $notEmailedSubscribers = $subscriberRepository->getNotEmailedSubscribers($date);

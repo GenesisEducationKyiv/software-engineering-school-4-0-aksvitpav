@@ -20,13 +20,13 @@ class SendDailyEmailJob implements ShouldQueue, EmailJobInterface
     use SerializesModels;
 
     /**
-     * @param string $subscriberId
+     * @param int $subscriberId
      * @param string $subscriberEmail
      * @param float $USDBuyRate
      * @param float $USDSaleRate
      */
     public function __construct(
-        public string $subscriberId,
+        public int $subscriberId,
         public string $subscriberEmail,
         public float $USDBuyRate,
         public float $USDSaleRate,
