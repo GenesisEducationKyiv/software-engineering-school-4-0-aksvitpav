@@ -3,105 +3,237 @@ version: '3.9'
 name: se_school_test
 
 services:
-  db:
-    image: postgres
-    container_name: se_db
+  traefik:
+    image: traefik:v2.8
+    container_name: se_traefik
     restart: unless-stopped
     ports:
-      - "54329:5432"
+      - "8000:80"
+      - "8080:8080"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - backend_currency
+      - backend_subscriber
+
+  db-currency:
+    image: postgres
+    container_name: se_db_currency
+    restart: unless-stopped
+    ports:
+      - "54330:5432"
     environment:
       - POSTGRES_HOST=localhost
-      - POSTGRES_DB=${DB_DATABASE:-se_db}
+      - POSTGRES_DB=${DB_DATABASE:-se_db_currency}
       - POSTGRES_USER=${DB_USERNAME:-aksonov}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-xda5gzxda5gz}
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data_currency:/var/lib/postgresql/data
     networks:
-      - backend
+      - backend_currency
 
-  redis:
+  db-subscriber:
+    image: postgres
+    container_name: se_db_subscriber
+    restart: unless-stopped
+    ports:
+      - "54331:5432"
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_DB=${DB_DATABASE:-se_db_subscriber}
+      - POSTGRES_USER=${DB_USERNAME:-aksonov}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-xda5gzxda5gz}
+    volumes:
+      - db_data_subscriber:/var/lib/postgresql/data
+    networks:
+      - backend_subscriber
+
+  redis-currency:
     image: redis:7-alpine3.19
-    container_name: se_redis
+    container_name: se_redis_currency
     restart: always
     expose:
-      - 63791
+      - 63800
     ports:
-      - "63791:6379"
+      - "63800:6379"
     networks:
-      - backend
+      - backend_currency
 
-  app:
+  redis-subscriber:
+    image: redis:7-alpine3.19
+    container_name: se_redis_subscriber
+    restart: always
+    expose:
+      - 63801
+    ports:
+      - "63801:6379"
+    networks:
+      - backend_subscriber
+
+  rabbitmq:
+    image: rabbitmq:3.9-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend_currency
+      - backend_subscriber
+
+  app-currency:
     build:
-      context: .
+      context: ./services/currency
       dockerfile: Dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    container_name: se_app
-    image: se_app:latest
+    container_name: se_app_currency
+    image: se_app_currency:latest
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
     volumes:
-      - .:/app
+      - ./services/currency:/app
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
-      - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./docker/php/currency.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
-      - redis
-      - db
+      - rabbitmq
+      - redis-currency
+      - db-currency
       - mail
     networks:
-      - backend
+      - backend_currency
+      - backend_subscriber
 
-  nginx:
-    container_name: se_app_nginx
+  app-subscriber:
+    build:
+      context: ./services/subscriber
+      dockerfile: Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: se_app_subscriber
+    image: se_app_subscriber:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    volumes:
+      - ./services/subscriber:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/subscriber.conf:/usr/local/etc/php-fpm.d/www.conf
+    depends_on:
+      - rabbitmq
+      - redis-subscriber
+      - db-subscriber
+      - mail
+    networks:
+      - backend_subscriber
+      - backend_currency
+
+  nginx-currency:
+    container_name: se_app_currency_nginx
     image: nginx:alpine
     ports:
-      - "8000:80"
+      - "8001:80"
     restart: unless-stopped
     volumes:
-      - .:/app
-      - ./docker/nginx/app.conf:/etc/nginx/conf.d/default.conf
+      - ./services/currency:/app
+      - ./docker/nginx/currency.conf:/etc/nginx/conf.d/default.conf
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx-currency.rule=PathPrefix(`/api/rate`)"
+      - "traefik.http.routers.nginx-currency.entrypoints=web"
+      - "traefik.http.services.nginx-currency.loadbalancer.server.port=80"
     depends_on:
-      - app
+      - app-currency
     networks:
-      - backend
+      - backend_currency
 
-  queue:
-    image: se_app:latest
-    container_name: se_queue
+  nginx-subscriber:
+    container_name: se_app_subscriber_nginx
+    image: nginx:alpine
+    ports:
+      - "8002:80"
+    restart: unless-stopped
+    volumes:
+      - ./services/currency:/app
+      - ./docker/nginx/subscriber.conf:/etc/nginx/conf.d/default.conf
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx-subscriber.rule=PathPrefix(`/api/subscribe`)"
+      - "traefik.http.routers.nginx-subscriber.entrypoints=web"
+      - "traefik.http.services.nginx-subscriber.loadbalancer.server.port=80"
+    depends_on:
+      - app-subscriber
+    networks:
+      - backend_subscriber
+
+  queue-currency:
+    image: se_app_currency:latest
+    container_name: se_queue_currency
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
     volumes:
-      - .:/app
+      - ./services/currency:/app
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
-      - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./docker/php/currency.conf:/usr/local/etc/php-fpm.d/www.conf
     command: php artisan queue:work
     depends_on:
-      - redis
-      - db
-      - mail
+      - app-currency
     networks:
-      - backend
+      - backend_currency
 
-  schedule:
-    image: se_app:latest
-    container_name: se_schedule
+  queue-subsciber:
+    image: se_app_subscriber:latest
+    container_name: se_queue_subscriber
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    volumes:
+      - ./services/subscriber:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/subscriber.conf:/usr/local/etc/php-fpm.d/www.conf
+    command: php artisan queue:work
+    depends_on:
+      - app-subscriber
+    networks:
+      - backend_subscriber
+
+  schedule-currency:
+    image: se_app_currency:latest
+    container_name: se_schedule_currency
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: on-failure
     volumes:
-      - .:/app
+      - ./services/currency:/app
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
-      - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./docker/php/currency.conf:/usr/local/etc/php-fpm.d/www.conf
     command: php artisan schedule:work
     depends_on:
-      - redis
-      - db
-      - mail
+      - app-currency
     networks:
-      - backend
+      - backend_currency
+
+  schedule-subscriber:
+    image: se_app_subscriber:latest
+    container_name: se_schedule_subscriber
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: on-failure
+    volumes:
+      - ./services/subscriber:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/subscriber.conf:/usr/local/etc/php-fpm.d/www.conf
+    command: php artisan schedule:work
+    depends_on:
+      - app-subscriber
+    networks:
+      - backend_subscriber
 
   mail:
     image: axllent/mailpit
@@ -110,11 +242,16 @@ services:
       - "8025:8025"
       - "1025:1025"
     networks:
-      - backend
+      - backend_currency
+      - backend_subscriber
 
 volumes:
   db_data:
+  db_data_currency:
+  db_data_subscriber:
 
 networks:
-  backend:
+  backend_currency:
+    driver: bridge
+  backend_subscriber:
     driver: bridge
