@@ -6,6 +6,7 @@ use App\Actions\FetchCurrencyRateAction;
 use App\Actions\StoreCurrencyRateAction;
 use App\DTOs\CurrencyRateDTO;
 use App\Enums\CurrencyCodeEnum;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -25,6 +26,7 @@ class FetchCurrencyRateCommand extends Command
      * @param FetchCurrencyRateAction $fetchCurrencyRate
      * @param StoreCurrencyRateAction $storeCurrencyRateAction
      * @return void
+     * @throws Exception
      */
     public function handle(
         FetchCurrencyRateAction $fetchCurrencyRate,

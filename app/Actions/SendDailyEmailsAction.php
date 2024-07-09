@@ -4,7 +4,7 @@ namespace App\Actions;
 
 use App\Exceptions\SendingEmailException;
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
-use App\Jobs\SendDailyEmailJob;
+use App\Jobs\Email\SendDailyEmailJob;
 use App\Models\CurrencyRate;
 use Illuminate\Support\Facades\Log;
 
