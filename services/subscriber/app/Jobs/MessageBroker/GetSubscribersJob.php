@@ -31,6 +31,7 @@ class GetSubscribersJob implements ShouldQueue
             'saleRate' => $rate->getSaleRate(),
         ];
 
+        /** @var array{array{"id":int, "email":string}} $notEmailedSubscribers */
         $notEmailedSubscribers = $notEmailedSubscribers->map(function (Subscriber $subscriber) {
             return [
                 'id' => $subscriber->id,
