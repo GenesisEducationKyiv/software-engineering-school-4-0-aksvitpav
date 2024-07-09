@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Commands\GetSubscribersCommand;
+use App\Jobs\MessageBroker\GetSubscribersJob;
 use Illuminate\Console\Command;
 
 class SendDailyEmailsCommand extends Command
@@ -11,12 +11,8 @@ class SendDailyEmailsCommand extends Command
 
     protected $description = 'Send daily emails for subscribers';
 
-    /**
-     * @param GetSubscribersCommand $getSubscribersCommand
-     * @return void
-     */
-    public function handle(GetSubscribersCommand $getSubscribersCommand): void
+    public function handle(): void
     {
-        $getSubscribersCommand->execute();
+        GetSubscribersJob::dispatch()->onQueue('subscriber');
     }
 }

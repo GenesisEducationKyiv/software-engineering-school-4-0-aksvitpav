@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Commands;
 
-use App\Actions\GetNotEmailedSuscribersAction;
+use App\Actions\GetNotEmailedSubscribersAction;
 use App\Console\Commands\SendDailyEmailsCommand;
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery;
@@ -15,10 +15,10 @@ class SendDailyEmailsCommandTest extends TestCase
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function test_it_calls_send_daily_emails_action()
     {
-        $mockAction = Mockery::mock(GetNotEmailedSuscribersAction::class);
+        $mockAction = Mockery::mock(GetNotEmailedSubscribersAction::class);
         $mockAction->shouldReceive('execute')->once();
 
-        $this->app->instance(GetNotEmailedSuscribersAction::class, $mockAction);
+        $this->app->instance(GetNotEmailedSubscribersAction::class, $mockAction);
         $command = new SendDailyEmailsCommand();
 
         $command->handle($mockAction);

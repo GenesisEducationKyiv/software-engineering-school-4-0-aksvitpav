@@ -32,6 +32,7 @@ class SubscriberRepository extends AbstractRepository implements SubscriberRepos
         return $query
             ->where(function (Builder $query) use ($toDate) {
                 $query
+                    ->where('subscribers.is_active', true)
                     ->whereNull('subscribers.emailed_at')
                     ->orWhere('subscribers.emailed_at', '<', $toDate);
             })

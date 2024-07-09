@@ -44,23 +44,6 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7-alpine3.19
-    container_name: se_redis
-    restart: always
-    expose:
-      - 63800
-    ports:
-      - "63800:6379"
-    volumes:
-      - se_redis_data:/data
-    networks:
-      - backend_currency
-      - backend_subscriber
-      - backend_mailer
-    healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
-
   rabbitmq:
     image: rabbitmq:3.9-management-alpine
     ports:
@@ -87,11 +70,11 @@ services:
       - ./docker/php/currency.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - rabbitmq
-      - redis
       - db
     networks:
       - backend_currency
       - backend_subscriber
+      - rabbit-mq
 
   app-subscriber:
     build:
@@ -111,7 +94,6 @@ services:
       - ./docker/php/subscriber.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - rabbitmq
-      - redis
       - db
     networks:
       - backend_subscriber
@@ -136,7 +118,6 @@ services:
       - ./docker/php/mailer.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - rabbitmq
-      - redis
       - db
       - mail
     networks:
@@ -161,6 +142,7 @@ services:
       - app-currency
     networks:
       - backend_currency
+      - rabbit-mq
 
   nginx-subscriber:
     container_name: se_app_subscriber_nginx
@@ -181,6 +163,7 @@ services:
       - app-subscriber
     networks:
       - backend_subscriber
+      - rabbit-mq
 
   queue-currency:
     image: se_app_currency:latest
@@ -197,6 +180,24 @@ services:
       - app-currency
     networks:
       - backend_currency
+      - rabbit-mq
+
+  queue-subscriber:
+    image: se_app_subscriber:latest
+    container_name: se_queue_subscriber
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    volumes:
+      - ./services/subscriber:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/subscriber.conf:/usr/local/etc/php-fpm.d/www.conf
+    command: php artisan queue:work
+    depends_on:
+      - app-subscriber
+    networks:
+      - backend_subscriber
+      - rabbit-mq
 
   queue-mailer:
     image: se_app_mailer:latest
@@ -213,6 +214,7 @@ services:
       - app-mailer
     networks:
       - backend_mailer
+      - rabbit-mq
 
   schedule-currency:
     image: se_app_currency:latest
@@ -229,6 +231,7 @@ services:
       - app-currency
     networks:
       - backend_currency
+      - rabbit-mq
 
   schedule-subscriber:
     image: se_app_subscriber:latest
@@ -245,6 +248,24 @@ services:
       - app-subscriber
     networks:
       - backend_subscriber
+      - rabbit-mq
+
+  schedule-mailer:
+    image: se_app_mailer:latest
+    container_name: se_schedule_mailer
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: on-failure
+    volumes:
+      - ./services/mailer:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/mailer.conf:/usr/local/etc/php-fpm.d/www.conf
+    command: php artisan schedule:work
+    depends_on:
+      - app-mailer
+    networks:
+      - backend_mailer
+      - rabbit-mq
 
   mail:
     image: axllent/mailpit
@@ -257,7 +278,6 @@ services:
 
 volumes:
   se_db_data:
-  se_redis_data:
 
 networks:
   backend_currency:
