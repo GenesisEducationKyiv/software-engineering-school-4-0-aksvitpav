@@ -28,7 +28,7 @@ services:
       - "54330:5432"
     environment:
       POSTGRES_HOST: "localhost"
-      POSTGRES_MULTIPLE_DATABASES: "se_db_currency, se_db_subscriber, se_db_mailer"
+      POSTGRES_MULTIPLE_DATABASES: "se_db_currency, se_db_subscriber, se_db_mailer, se_db_customer"
       POSTGRES_USER: "aksonov"
       POSTGRES_PASSWORD: "xda5gzxda5gz"
     volumes:
@@ -38,6 +38,7 @@ services:
       - backend_currency
       - backend_subscriber
       - backend_mailer
+      - backend_customer
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -122,6 +123,29 @@ services:
       - mail
     networks:
       - backend_mailer
+      - rabbit-mq
+
+  app-customer:
+    build:
+      context: ./services/customer
+      dockerfile: Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: se_app_customer
+    image: se_app_customer:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    volumes:
+      - ./services/customer:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/customer.conf:/usr/local/etc/php-fpm.d/www.conf
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - backend_customer
       - rabbit-mq
 
   nginx-currency:
@@ -285,6 +309,8 @@ networks:
   backend_subscriber:
     driver: bridge
   backend_mailer:
+    driver: bridge
+  backend_customer:
     driver: bridge
   rabbit-mq:
     driver: bridge
