@@ -94,6 +94,21 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'shared_pgsql' => [
+            'driver' => 'pgsql',
+            'url' => env('SHARED_DB_URL'),
+            'host' => env('SHARED_DB_HOST', '127.0.0.1'),
+            'port' => env('SHARED_DB_PORT', '5432'),
+            'database' => env('SHARED_DB_DATABASE', 'laravel'),
+            'username' => env('SHARED_DB_USERNAME', 'root'),
+            'password' => env('SHARED_DB_PASSWORD', ''),
+            'charset' => env('SHARED_DB_CHARSET', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\SubscribeUserAction;
-use App\DTOs\SubscriberDTO;
-use App\Exceptions\SubscribtionError;
 use App\Http\Requests\SubscribeRequest;
+use App\Workflows\SubscribeSaga;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response;
+use Workflow\WorkflowStub;
 
 class SubscribeController extends Controller
 {
@@ -49,24 +49,26 @@ class SubscribeController extends Controller
      *   )
      *
      * @param SubscribeRequest $request
-     * @param SubscribeUserAction $subscribeUserAction
      * @return JsonResponse
-     * @throws SubscribtionError
      */
-    public function __invoke(
-        SubscribeRequest $request,
-        SubscribeUserAction $subscribeUserAction
-    ): JsonResponse {
+    public function __invoke(SubscribeRequest $request): JsonResponse
+    {
         /** @var array{"email":string, "emailed_at"?: Carbon, "id"?: int} $requestData */
         $requestData = $request->validated();
-        $dto = SubscriberDTO::fromArray($requestData);
+        $email = $requestData['email'];
 
-        $isSubscribed = $subscribeUserAction->execute($dto);
+        $saga = WorkflowStub::make(SubscribeSaga::class);
+        $saga->start($email);
+        while ($saga->running());
 
-        if ($isSubscribed) {
+        if ($saga->output()) {
             return response()->json(['message' => 'Email successfully added'], Response::HTTP_OK);
+        } else {
+            Log::error('Subscribe user saga failed');
+            return response()->json(
+                ['message' => 'Email already exists or something went wrong'],
+                Response::HTTP_CONFLICT
+            );
         }
-
-        return response()->json(['message' => 'Email already exists'], Response::HTTP_CONFLICT);
     }
 }

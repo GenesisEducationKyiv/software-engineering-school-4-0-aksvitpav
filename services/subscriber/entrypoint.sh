@@ -12,5 +12,6 @@ php artisan storage:link --force --no-interaction
 php artisan migrate --force  --no-interaction
 php artisan db:seed --force --no-interaction
 cp -rf /app/public/. /tmp/nginx-public/.
+php artisan rabbitmq:queue-declare subscriber
 
 exec "$@"

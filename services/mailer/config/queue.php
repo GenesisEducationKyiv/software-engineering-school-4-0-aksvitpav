@@ -91,6 +91,14 @@ return [
                     'type' => 'direct',
                     'declare' => true,
                 ],
+                'queue' => [
+                    'declare' => env('RABBITMQ_QUEUE_DECLARE', true),
+                    'bind' => env('RABBITMQ_QUEUE_BIND', true),
+                    'bind_arguments' => env('RABBITMQ_QUEUE_BIND_ARGUMENTS', []),
+                    'arguments' => env('RABBITMQ_QUEUE_ARGUMENTS', [
+                        'x-max-priority' => ['I', 10],
+                    ]),
+                ],
             ],
         ],
     ],
