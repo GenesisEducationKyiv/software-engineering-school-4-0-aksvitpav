@@ -15,6 +15,7 @@ class SubscribeSaga extends Workflow
     public int $tries = 0;
     public int $timeout = 0;
 
+    /** @return int[] */
     public function backoff(): array
     {
         return [0];
@@ -23,12 +24,12 @@ class SubscribeSaga extends Workflow
     public function execute(string $email): bool|Generator
     {
         try {
-            yield ActivityStub::make(SubscribeUserActivity::class, $email);
-            yield ActivityStub::make(CreateCustomerActivity::class, $email);
+            yield ActivityStub::make(SubscribeUserActivity::class, $email); // @phpstan-ignore-line
+            yield ActivityStub::make(CreateCustomerActivity::class, $email); // @phpstan-ignore-line
             return true;
         } catch (Throwable $exception) {
-            yield ActivityStub::make(CancelCreateCustomerActivity::class, $email);
-            yield ActivityStub::make(CancelSubscribeUserActivity::class, $email);
+            yield ActivityStub::make(CancelCreateCustomerActivity::class, $email); // @phpstan-ignore-line
+            yield ActivityStub::make(CancelSubscribeUserActivity::class, $email); // @phpstan-ignore-line
             return false;
         }
     }

@@ -4,10 +4,10 @@ namespace App\Workflows;
 
 use Workflow\Activity;
 
-class CreateCustomerActivity extends Activity
+class SubscribeUserActivity extends Activity
 {
     public $connection = 'rabbitmq';
-    public $queue = 'customer';
+    public $queue = 'subscriber';
 
     /** @var int $tries */
     public $tries = 1;

@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-final class CreateWorkflowSignalsTable extends Migration
+return new class extends Migration
 {
     protected $connection = 'shared_pgsql';
 
@@ -32,4 +32,4 @@ final class CreateWorkflowSignalsTable extends Migration
     {
         Schema::dropIfExists('workflow_signals');
     }
-}
+};
