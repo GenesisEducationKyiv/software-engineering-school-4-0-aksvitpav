@@ -9,11 +9,13 @@ readonly class SubscriberDTO
 {
     /**
      * @param string $email
+     * @param bool $isActive
      * @param Carbon|null $emailedAt
      * @param int|null $id
      */
     public function __construct(
         private string $email,
+        private bool $isActive = true,
         private ?Carbon $emailedAt = null,
         private ?int $id = null,
     ) {
@@ -22,6 +24,7 @@ readonly class SubscriberDTO
     /**
      * @param array{
      *     "email":string,
+     *     "is_active"?:bool,
      *      "emailed_at"?:Carbon,
      *      "id"?:int
      * } $data
@@ -35,6 +38,7 @@ readonly class SubscriberDTO
 
         return new SubscriberDTO(
             email: (string)$data['email'],
+            isActive: (bool)($data['is_active'] ?? true),
             emailedAt: ($data['emailed_at'] ?? null) ? Carbon::parse($data['emailed_at']) : null,
             id: ($data['id'] ?? null) ? (int)$data['id'] : null,
         );
@@ -46,6 +50,14 @@ readonly class SubscriberDTO
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->isActive;
     }
 
     /**
@@ -65,12 +77,13 @@ readonly class SubscriberDTO
     }
 
     /**
-     * @return array{"email":string, "emailed_at": ?Carbon, "id": ?int}
+     * @return array{"email":string, "is_active":bool, "emailed_at": ?Carbon, "id": ?int}
      */
     public function toArray(): array
     {
         return [
             'email' => $this->email,
+            'is_active' => $this->isActive,
             'emailed_at' => $this->emailedAt,
             'id' => $this->id,
         ];

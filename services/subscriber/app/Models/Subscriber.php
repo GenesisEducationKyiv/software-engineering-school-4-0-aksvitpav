@@ -28,6 +28,7 @@ class Subscriber extends Model
     protected $fillable = [
         'email',
         'emailed_at',
+        'is_active'
     ];
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Jobs\Email;
 
 use App\Interfaces\Jobs\EmailJobInterface;
+use App\Jobs\MessageBroker\SetEmailedAtJob;
 use App\Mail\CurrentRateMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,11 +20,13 @@ class SendDailyEmailJob implements ShouldQueue, EmailJobInterface
     use SerializesModels;
 
     /**
+     * @param int $subscriberId
      * @param string $subscriberEmail
      * @param float $USDBuyRate
      * @param float $USDSaleRate
      */
     public function __construct(
+        public int $subscriberId,
         public string $subscriberEmail,
         public float $USDBuyRate,
         public float $USDSaleRate,
@@ -41,5 +44,7 @@ class SendDailyEmailJob implements ShouldQueue, EmailJobInterface
                 USDSaleRate: $this->USDSaleRate,
             )
         );
+
+        SetEmailedAtJob::dispatch($this->subscriberId)->onQueue('subscriber');
     }
 }
