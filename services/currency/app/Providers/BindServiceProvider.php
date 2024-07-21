@@ -6,10 +6,8 @@ use App\Adapters\ABankCurrencyRateAdapter;
 use App\Adapters\PrivatBankCurrencyRateAdapter;
 use App\Interfaces\Repositories\CurrencyRateRepositoryInterface;
 use App\Interfaces\Services\CurrencyRateServiceInterface;
-use App\Interfaces\Services\RabbitMQServiceInterface;
 use App\Repositories\CurrencyRateRepository;
 use App\Services\CurrencyRateService;
-use App\Services\RabbitMQService;
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
@@ -46,7 +44,6 @@ class BindServiceProvider extends ServiceProvider
 
             return new CurrencyRateService($providers);
         });
-        $this->app->bind(RabbitMQServiceInterface::class, RabbitMQService::class);
     }
 
     /**

@@ -2,29 +2,29 @@
 
 namespace App\Actions;
 
-use App\Exceptions\SendingEmailException;
 use App\Interfaces\Adapters\CurrencyRateAdapterInterface;
 use App\Interfaces\Repositories\SubscriberRepositoryInterface;
-use App\Jobs\Email\SendDailyEmailJob;
+use App\Interfaces\Services\RabbitMQServiceInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 
 class SendDailyEmailsAction
 {
     /**
      * @param SubscriberRepositoryInterface $subscriberRepository
-     * @param SendEmailAction $sendEmailAction
+     * @param SetEmailedAtForSubscriberAction $setEmailedAtAction
      * @param CurrencyRateAdapterInterface $currencyRateAdapter
+     * @param RabbitMQServiceInterface $rabbitMQService
      */
     public function __construct(
         protected SubscriberRepositoryInterface $subscriberRepository,
-        protected SendEmailAction $sendEmailAction,
+        protected SetEmailedAtForSubscriberAction $setEmailedAtAction,
         protected CurrencyRateAdapterInterface $currencyRateAdapter,
+        protected RabbitMQServiceInterface $rabbitMQService,
     ) {
     }
 
     /**
      * @return void
-     * @throws SendingEmailException
      * @throws BindingResolutionException
      */
     public function execute(): void
@@ -36,7 +36,19 @@ class SendDailyEmailsAction
         $subscribers = $this->subscriberRepository->getNotEmailedSubscribers($startToday);
 
         foreach ($subscribers as $subscriber) {
-            $this->sendEmailAction->execute($subscriber, SendDailyEmailJob::class, $currencyRate);
+            /** @var string $message */
+            $message = json_encode([
+                'email' => $subscriber->email,
+                'buy_rate' => $currencyRate->getBuyRate(),
+                'sale_rate' => $currencyRate->getSaleRate(),
+            ]);
+
+            $this->rabbitMQService->sendMessage(
+                'email',
+                $message
+            );
+
+            $this->setEmailedAtAction->execute($subscriber->id);
         }
     }
 }
