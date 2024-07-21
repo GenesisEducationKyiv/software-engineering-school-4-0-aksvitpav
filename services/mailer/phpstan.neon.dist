@@ -1,0 +1,21 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/phpat/phpat/extension.neon
+
+services:
+    -
+        class: Tests\Architecture\ArchitectureTest
+        tags:
+            - phpat.test
+
+parameters:
+
+    paths:
+        - app/
+        - tests/Architecture
+
+    level: 9
+
+    phpat:
+            ignore_built_in_classes: false
+            show_rule_names: true

@@ -20,59 +20,29 @@ services:
       - backend_currency
       - backend_subscriber
 
-  db-currency:
-    image: postgres
-    container_name: se_db_currency
+  db:
+    image: postgres:alpine3.19
+    container_name: se_db
     restart: unless-stopped
     ports:
       - "54330:5432"
     environment:
-      - POSTGRES_HOST=localhost
-      - POSTGRES_DB=${DB_DATABASE:-se_db_currency}
-      - POSTGRES_USER=${DB_USERNAME:-aksonov}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-xda5gzxda5gz}
+      POSTGRES_HOST: "localhost"
+      POSTGRES_MULTIPLE_DATABASES: "se_db_currency, se_db_subscriber, se_db_mailer"
+      POSTGRES_USER: "aksonov"
+      POSTGRES_PASSWORD: "xda5gzxda5gz"
     volumes:
-      - db_data_currency:/var/lib/postgresql/data
+      - se_db_data:/var/lib/postgresql/data
+      - ./docker/db/init.sh:/docker-entrypoint-initdb.d/init.sh
     networks:
       - backend_currency
-
-  db-subscriber:
-    image: postgres
-    container_name: se_db_subscriber
-    restart: unless-stopped
-    ports:
-      - "54331:5432"
-    environment:
-      - POSTGRES_HOST=localhost
-      - POSTGRES_DB=${DB_DATABASE:-se_db_subscriber}
-      - POSTGRES_USER=${DB_USERNAME:-aksonov}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-xda5gzxda5gz}
-    volumes:
-      - db_data_subscriber:/var/lib/postgresql/data
-    networks:
       - backend_subscriber
-
-  redis-currency:
-    image: redis:7-alpine3.19
-    container_name: se_redis_currency
-    restart: always
-    expose:
-      - 63800
-    ports:
-      - "63800:6379"
-    networks:
-      - backend_currency
-
-  redis-subscriber:
-    image: redis:7-alpine3.19
-    container_name: se_redis_subscriber
-    restart: always
-    expose:
-      - 63801
-    ports:
-      - "63801:6379"
-    networks:
-      - backend_subscriber
+      - backend_mailer
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:3.9-management-alpine
@@ -80,8 +50,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - backend_currency
-      - backend_subscriber
+      - rabbit-mq
 
   app-currency:
     build:
@@ -101,12 +70,11 @@ services:
       - ./docker/php/currency.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - rabbitmq
-      - redis-currency
-      - db-currency
-      - mail
+      - db
     networks:
       - backend_currency
       - backend_subscriber
+      - rabbit-mq
 
   app-subscriber:
     build:
@@ -126,12 +94,35 @@ services:
       - ./docker/php/subscriber.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - rabbitmq
-      - redis-subscriber
-      - db-subscriber
-      - mail
+      - db
     networks:
       - backend_subscriber
       - backend_currency
+      - rabbit-mq
+
+  app-mailer:
+    build:
+      context: ./services/mailer
+      dockerfile: Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: se_app_mailer
+    image: se_app_mailer:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    volumes:
+      - ./services/mailer:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/mailer.conf:/usr/local/etc/php-fpm.d/www.conf
+    depends_on:
+      - rabbitmq
+      - db
+      - mail
+    networks:
+      - backend_mailer
+      - rabbit-mq
 
   nginx-currency:
     container_name: se_app_currency_nginx
@@ -151,6 +142,7 @@ services:
       - app-currency
     networks:
       - backend_currency
+      - rabbit-mq
 
   nginx-subscriber:
     container_name: se_app_subscriber_nginx
@@ -164,12 +156,14 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nginx-subscriber.rule=PathPrefix(`/api/subscribe`)"
+      - "traefik.http.routers.nginx-subscriber.rule=PathPrefix(`/api/unsubscribe`)"
       - "traefik.http.routers.nginx-subscriber.entrypoints=web"
       - "traefik.http.services.nginx-subscriber.loadbalancer.server.port=80"
     depends_on:
       - app-subscriber
     networks:
       - backend_subscriber
+      - rabbit-mq
 
   queue-currency:
     image: se_app_currency:latest
@@ -186,8 +180,9 @@ services:
       - app-currency
     networks:
       - backend_currency
+      - rabbit-mq
 
-  queue-subsciber:
+  queue-subscriber:
     image: se_app_subscriber:latest
     container_name: se_queue_subscriber
     extra_hosts:
@@ -202,6 +197,24 @@ services:
       - app-subscriber
     networks:
       - backend_subscriber
+      - rabbit-mq
+
+  queue-mailer:
+    image: se_app_mailer:latest
+    container_name: se_queue_mailer
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    volumes:
+      - ./services/mailer:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/mailer.conf:/usr/local/etc/php-fpm.d/www.conf
+    command: php artisan queue:work
+    depends_on:
+      - app-mailer
+    networks:
+      - backend_mailer
+      - rabbit-mq
 
   schedule-currency:
     image: se_app_currency:latest
@@ -218,6 +231,7 @@ services:
       - app-currency
     networks:
       - backend_currency
+      - rabbit-mq
 
   schedule-subscriber:
     image: se_app_subscriber:latest
@@ -234,6 +248,24 @@ services:
       - app-subscriber
     networks:
       - backend_subscriber
+      - rabbit-mq
+
+  schedule-mailer:
+    image: se_app_mailer:latest
+    container_name: se_schedule_mailer
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: on-failure
+    volumes:
+      - ./services/mailer:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/php/mailer.conf:/usr/local/etc/php-fpm.d/www.conf
+    command: php artisan schedule:work
+    depends_on:
+      - app-mailer
+    networks:
+      - backend_mailer
+      - rabbit-mq
 
   mail:
     image: axllent/mailpit
@@ -242,16 +274,17 @@ services:
       - "8025:8025"
       - "1025:1025"
     networks:
-      - backend_currency
-      - backend_subscriber
+      - backend_mailer
 
 volumes:
-  db_data:
-  db_data_currency:
-  db_data_subscriber:
+  se_db_data:
 
 networks:
   backend_currency:
     driver: bridge
   backend_subscriber:
+    driver: bridge
+  backend_mailer:
+    driver: bridge
+  rabbit-mq:
     driver: bridge

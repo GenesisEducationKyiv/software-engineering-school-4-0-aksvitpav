@@ -194,7 +194,7 @@
     </class>
   </package>
   <package name="App\Mail" noc="1" noi="0" nom="4" nof="0" cr="0.15" rcr="0.2775">
-    <class name="CurrentRateMail" fqname="App\Mail\CurrentRateMail" start="11" end="51" loc="41" cloc="11" eloc="15" lloc="3" ncloc="30" dit="2" noam="4" nocc="0" noom="0" nom="4" cr="0.15" rcr="0.2775" ca="1" cbo="2" ce="2" impl="0" cis="4" csz="4" npm="4" vars="0" varsi="0" varsnp="0" wmc="4" wmci="4" wmcnp="4">
+    <class name="CurrentRateMail" fqname="app\Mail\CurrentRateMail" start="11" end="51" loc="41" cloc="11" eloc="15" lloc="3" ncloc="30" dit="2" noam="4" nocc="0" noom="0" nom="4" cr="0.15" rcr="0.2775" ca="1" cbo="2" ce="2" impl="0" cis="4" csz="4" npm="4" vars="0" varsi="0" varsnp="0" wmc="4" wmci="4" wmcnp="4">
       <file name="/app/app/Mail/CurrentRateMail.php"/>
       <method name="__construct" start="16" end="20" ccn="1" ccn2="1" loc="5" cloc="0" eloc="2" lloc="0" ncloc="5" npath="1" hnt="2" hnd="2" hv="2" hd="2" hl="0.5" he="4" ht="0.22222222222222" hb="0.00083994736659658" hi="1" mi="91.191023588314"/>
       <method name="envelope" start="25" end="30" ccn="1" ccn2="1" loc="6" cloc="0" eloc="5" lloc="1" ncloc="6" npath="1" hnt="9" hnd="9" hv="28.529325012981" hd="6" hl="0.16666666666667" he="171.17595007788" ht="9.5097750043269" hb="0.010276389970974" hi="4.7548875021635" mi="74.428220343202"/>
