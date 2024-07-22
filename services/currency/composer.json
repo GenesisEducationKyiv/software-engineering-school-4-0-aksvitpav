@@ -10,6 +10,7 @@
         "darkaonline/l5-swagger": "^8.6",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
+        "spatie/laravel-prometheus": "^1.1",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.1"
     },
     "require-dev": {
