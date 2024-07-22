@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: 'currency'
+    metrics_path: /prometheus
+    static_configs:
+      - targets: ['nginx-currency']
+
+  - job_name: 'subscriber'
+    metrics_path: /prometheus
+    static_configs:
+      - targets: ['nginx-subscriber']
+
+  - job_name: 'mailer'
+    metrics_path: /prometheus
+    static_configs:
+      - targets: ['nginx-mailer']
+
+  - job_name: 'customer'
+    metrics_path: /prometheus
+    static_configs:
+      - targets: ['nginx-customer']
